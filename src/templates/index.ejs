@@ -39,15 +39,18 @@
         }
 
         .container {
-            max-width: 1600px;
+            max-width: 1200px;
+            /* Narrower container for 2 columns looks more balanced */
             margin: 0 auto;
             padding: 0 20px 60px;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(2, 1fr);
+            /* Force 2 columns */
+            gap: 40px;
+            /* Larger gap for better separation */
         }
 
         @media (max-width: 480px) {
