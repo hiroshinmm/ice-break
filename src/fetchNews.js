@@ -75,6 +75,10 @@ async function main() {
     const outFile = path.join(outDir, 'news.json');
     fs.writeFileSync(outFile, JSON.stringify(results, null, 2), 'utf-8');
     console.log(`\nSaved news data to ${outFile}`);
+    process.exit(0); // Add explicit exit to prevent GitHub Actions from hanging
 }
 
-main().catch(console.error);
+main().catch(error => {
+    console.error(error);
+    process.exit(1);
+});

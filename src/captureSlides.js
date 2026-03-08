@@ -93,6 +93,10 @@ async function main() {
     const indexOutFile = path.join(distDir, 'index.html');
     fs.writeFileSync(indexOutFile, indexContent, 'utf-8');
     console.log(`Saved index.html to ${indexOutFile}`);
+    process.exit(0);
 }
 
-main().catch(console.error);
+main().catch(error => {
+    console.error(error);
+    process.exit(1);
+});

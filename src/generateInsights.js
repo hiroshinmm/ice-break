@@ -85,6 +85,10 @@ ${newsText}
     const outFile = path.join(dataDir, 'insights.json');
     fs.writeFileSync(outFile, JSON.stringify(insights, null, 2), 'utf-8');
     console.log(`\nSaved insights data to ${outFile}`);
+    process.exit(0);
 }
 
-main().catch(console.error);
+main().catch(error => {
+    console.error(error);
+    process.exit(1);
+});
