@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>TCLの1,040Hzゲーミングモニター：高リフレッシュレートの新境地</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Noto+Sans+JP:wght@300;500;700&display=swap');
+    
+    body {
+      margin: 0;
+      padding: 0;
+      width: 1920px;
+      height: 1080px;
+      font-family: 'Outfit', 'Noto Sans JP', sans-serif;
+      background-color: #ffffff;
+      color: #333333;
+      overflow: hidden;
+      display: flex;
+    }
+
+    /* Left Text Pane */
+    .left-pane {
+      width: 50%;
+      padding: 80px 100px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+
+    .category {
+      font-family: 'Outfit', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: #7A8B99;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .category::before {
+      content: "";
+      display: inline-block;
+      width: 40px;
+      height: 4px;
+      background-color: #4A90E2;
+      margin-right: 15px;
+      border-radius: 2px;
+    }
+
+    .title {
+      font-size: 56px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 40px;
+      color: #1A1A1A;
+    }
+
+    .summary {
+      font-size: 26px;
+      line-height: 1.6;
+      color: #555555;
+      margin-bottom: 60px;
+      border-left: 4px solid #E0E0E0;
+      padding-left: 30px;
+    }
+
+    .insight-box {
+      background: linear-gradient(135deg, #F8FAFC, #EDF2F7);
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+
+    .insight-label {
+      font-family: 'Outfit', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #4A90E2;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .insight-text {
+      font-size: 26px;
+      line-height: 1.6;
+      font-weight: 500;
+      color: #2D3748;
+    }
+
+    .source {
+      position: absolute;
+      bottom: 60px;
+      left: 100px;
+      font-size: 18px;
+      color: #888888;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Right Image Pane */
+    .right-pane {
+      width: 50%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .right-pane img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      /* If DALL-E/Gemini image size is not exact 16:9, it handles gracefully */
+    }
+
+    /* Gradient overlay for blending image boundary slightly */
+    .right-pane::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 150px;
+      height: 100%;
+      background: linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
+      z-index: 1;
+    }
+
+    .glass-footer {
+      position: absolute;
+      bottom: 40px;
+      right: 40px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      padding: 15px 30px;
+      border-radius: 30px;
+      font-size: 16px;
+      color: #333;
+      font-weight: 500;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="left-pane">
+    <div class="category">TCL</div>
+    <div class="title">TCLの1,040Hzゲーミングモニター：高リフレッシュレートの新境地</div>
+    <div class="summary">TCLがリフレッシュレート最大1,040Hzを実現する新型ゲーミングモニターを発表しました。従来のハイエンド機の常識を大幅に上回る性能で、ディスプレイの高速応答技術に新たなパラダイムシフトをもたらしています。</div>
+    
+    <div class="insight-box">
+      <div class="insight-label">Engineer Insight</div>
+      <div class="insight-text">INSIGHT: 1,000Hz超えは単なるスペック競争ではなく、パネルの駆動回路と液晶の応答速度、およびインターフェース帯域の限界に挑む挑戦です。特に、これほどの高周波数ではモーションブラーの知覚はほぼ消失しますが、一方でコントローラーの入力遅延やGPUレンダリング負荷との同期が新たなボトルネックとなります。エンジニアとしては、単なる液晶の高速化にとどまらず、画像処理エンジンの信号遅延を極限まで低減させるためのパイプライン設計や、データ転送効率の最適化について再考する契機となるはずです。</div>
+    </div>
+
+    <div class="source">
+      Source: <strong>eTeknix</strong> | <span>https://news.google.com/rss/articles/CBMimwFBVV95cUxNNlBhOUZBV0ZoTEV5TWQxTFRBVllRVGJ1dWpvaWtJbU5FcHBkSmR4dVVpTWI4NndkV2FMc0dmT25OcFhlZFdja3NDdUVheTMzQjdtMS1BejJ2d0Z6aGxjTWl3Tl9qdjNnUW1RRWNxS3k1ZlhXYUo4WGNYQkFYdVhzMlVQdGEzWDYzSVhzR0tqYzZfV3VxZW9GcTV5Zw?oc=5</span>
+    </div>
+  </div>
+
+  <div class="right-pane">
+    <img src="https://source.unsplash.com/1920x1080/?technology,TCL" alt="Slide Image">
+    <div class="glass-footer">Automated Weekly Tech Briefing</div>
+  </div>
+
+</body>
+</html>

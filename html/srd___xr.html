@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>山形大学VR部に見る学生発のXRエコシステム</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Noto+Sans+JP:wght@300;500;700&display=swap');
+    
+    body {
+      margin: 0;
+      padding: 0;
+      width: 1920px;
+      height: 1080px;
+      font-family: 'Outfit', 'Noto Sans JP', sans-serif;
+      background-color: #ffffff;
+      color: #333333;
+      overflow: hidden;
+      display: flex;
+    }
+
+    /* Left Text Pane */
+    .left-pane {
+      width: 50%;
+      padding: 80px 100px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+
+    .category {
+      font-family: 'Outfit', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: #7A8B99;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .category::before {
+      content: "";
+      display: inline-block;
+      width: 40px;
+      height: 4px;
+      background-color: #4A90E2;
+      margin-right: 15px;
+      border-radius: 2px;
+    }
+
+    .title {
+      font-size: 56px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 40px;
+      color: #1A1A1A;
+    }
+
+    .summary {
+      font-size: 26px;
+      line-height: 1.6;
+      color: #555555;
+      margin-bottom: 60px;
+      border-left: 4px solid #E0E0E0;
+      padding-left: 30px;
+    }
+
+    .insight-box {
+      background: linear-gradient(135deg, #F8FAFC, #EDF2F7);
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+
+    .insight-label {
+      font-family: 'Outfit', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #4A90E2;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .insight-text {
+      font-size: 26px;
+      line-height: 1.6;
+      font-weight: 500;
+      color: #2D3748;
+    }
+
+    .source {
+      position: absolute;
+      bottom: 60px;
+      left: 100px;
+      font-size: 18px;
+      color: #888888;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Right Image Pane */
+    .right-pane {
+      width: 50%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .right-pane img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      /* If DALL-E/Gemini image size is not exact 16:9, it handles gracefully */
+    }
+
+    /* Gradient overlay for blending image boundary slightly */
+    .right-pane::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 150px;
+      height: 100%;
+      background: linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
+      z-index: 1;
+    }
+
+    .glass-footer {
+      position: absolute;
+      bottom: 40px;
+      right: 40px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      padding: 15px 30px;
+      border-radius: 30px;
+      font-size: 16px;
+      color: #333;
+      font-weight: 500;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="left-pane">
+    <div class="category">SRD / XR</div>
+    <div class="title">山形大学VR部に見る学生発のXRエコシステム</div>
+    <div class="summary">山形大学VR部が、大学発の枠組みを超えて外部との資金調達やマネタイズに積極的に取り組む事例が注目されています。単なる技術研究に留まらず、XR技術の社会実装とビジネス化を学生自らが主導する新しい形を提示しています。</div>
+    
+    <div class="insight-box">
+      <div class="insight-label">Engineer Insight</div>
+      <div class="insight-text">開発現場において、学生による「マネタイズから逃げない」姿勢は、技術の市場適合性（PMF）を追求する重要な視点です。ソフトウェアエンジニアとして、XRの体験価値を単なる面白さで終わらせず、どう持続可能なビジネスモデルに乗せるかという課題意識が求められます。特に高精細ディスプレイやXRデバイスのUX開発において、この「実用性と収益性」を早期から設計に組み込むアプローチは、将来的な製品展開においても強力な競争力となります。</div>
+    </div>
+
+    <div class="source">
+      Source: <strong>Newspicks</strong> | <span>https://news.google.com/rss/articles/CBMiVkFVX3lxTE9OUk5jSE41Q2Vjdm16djRPanBIUFhnN2ZzN19vdHVFaERpVW1qUG9SenV2b2hZZ2Q0NW9LMlcxdUE0Q1JoZXdGZjhQSnFETlRGLTZ3T1JR?oc=5</span>
+    </div>
+  </div>
+
+  <div class="right-pane">
+    <img src="https://source.unsplash.com/1920x1080/?technology,SRD" alt="Slide Image">
+    <div class="glass-footer">Automated Weekly Tech Briefing</div>
+  </div>
+
+</body>
+</html>
