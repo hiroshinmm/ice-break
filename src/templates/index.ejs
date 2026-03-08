@@ -47,8 +47,8 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            /* Force 2 columns */
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            /* Larger min-width ensures 2 columns max on 1200px */
             gap: 40px;
             /* Larger gap for better separation */
         }
