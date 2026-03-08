@@ -42,9 +42,21 @@ async function main() {
         const imgFileName = `${safeName}.png`;
         const imgFileFull = path.join(imageOutDir, imgFileName);
 
-        // Use a placeholder image based on the category for the visual
-        const query = encodeURIComponent(category.split('/')[0].trim());
-        const imageUrl = `https://source.unsplash.com/1920x1080/?technology,${query}`;
+        // source.unsplash.com is deprecated and often returns blank.
+        // We use a predefined Unsplash image ID mapping based on category to guarantee high-quality non-blank images.
+        const imageMap = {
+            "AI": "photo-1677442136019-21780ecad995",
+            "SRD / XR": "photo-1622979135225-d2ba269cf1ac",
+            "Gaming Monitor": "photo-1542744173-8e7e53415bb0",
+            "Production Monitor": "photo-1516223725307-6fc76b1a117c",
+            "Camera Control": "photo-1516035069371-29a1b244cc32",
+            "Projector": "photo-1585771724684-38269d6639fd",
+            "LED Wall Display": "photo-1550745165-9bc0b252726f",
+            "SONY": "photo-1616423640778-28d1b53229bd",
+            "TCL": "photo-1593784991095-a205069470b6"
+        };
+        const photoId = imageMap[category] || "photo-1451187580459-43490279c0fa"; // fallback tech image
+        const imageUrl = `https://images.unsplash.com/${photoId}?q=80&w=1920&h=1080&auto=format&fit=crop`;
 
         const htmlContent = ejs.render(templateString, {
             category: category,
