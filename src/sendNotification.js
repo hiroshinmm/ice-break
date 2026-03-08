@@ -20,15 +20,15 @@ async function main() {
     insightsData = JSON.parse(fs.readFileSync(insightsFile, 'utf-8'));
   }
 
-  // Prepare attachments
+  // Prepare attachments (Attach only JPG for smaller email size)
   const attachments = [];
   if (fs.existsSync(imagesDir)) {
-    const imageFiles = fs.readdirSync(imagesDir).filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file));
+    const imageFiles = fs.readdirSync(imagesDir).filter(file => /\.jpg$/i.test(file));
     for (const file of imageFiles) {
       attachments.push({
         filename: file,
         path: path.join(imagesDir, file),
-        cid: path.parse(file).name // Use filename without extension as Content-ID
+        cid: path.parse(file).name // Use filename (safeName) as Content-ID
       });
     }
   }
@@ -57,7 +57,8 @@ async function main() {
 
     const safeName = category.replace(/[^a-z0-9]/gi, '_').toLowerCase();
     const cid = safeName;
-    const imgWebUrl = GITHUB_PAGES_URL ? `${GITHUB_PAGES_URL}images/${safeName}.jpg` : '#';
+    // For Web, we link to the high-res PNG
+    const imgWebUrl = GITHUB_PAGES_URL ? `${GITHUB_PAGES_URL}images/${safeName}.png` : '#';
 
     htmlContent += `
       <div style="border: 1px solid #eee; border-radius: 8px; padding: 15px; background: #fafafa; margin-bottom: 30px; display: block; overflow: hidden;">
