@@ -10,6 +10,10 @@ module.exports = {
     GEMINI_MODEL: 'gemini-3.1-flash-lite-preview',
 
     feeds: {
+        "AI": [
+            "https://news.google.com/rss/search?q=AI+OR+%E4%BA%BA%E5%B7%A5%E7%9F%A5%E8%83%BD+when:7d&hl=ja&gl=JP&ceid=JP:ja",
+            "https://news.google.com/rss/search?q=AI+OR+%22Artificial+Intelligence%22+when:7d&hl=en-US&gl=US&ceid=US:en"
+        ],
         "SRD / XR": [
             "https://uploadvr.com/feed/",
             "https://www.moguravr.com/feed/",

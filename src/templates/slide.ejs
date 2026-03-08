@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8">
-  <title><%= insight.title %></title>
+  <title>
+    <%= insight.title %>
+  </title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Noto+Sans+JP:wght@300;500;700&display=swap');
-    
+
     body {
       margin: 0;
       padding: 0;
@@ -39,7 +42,7 @@
       display: flex;
       align-items: center;
     }
-    
+
     .category::before {
       content: "";
       display: inline-block;
@@ -71,7 +74,7 @@
       background: linear-gradient(135deg, #F8FAFC, #EDF2F7);
       padding: 40px;
       border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
     }
 
     .insight-label {
@@ -125,7 +128,7 @@
       left: 0;
       width: 150px;
       height: 100%;
-      background: linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
+      background: linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
       z-index: 1;
     }
 
@@ -140,25 +143,36 @@
       font-size: 16px;
       color: #333;
       font-weight: 500;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       z-index: 2;
     }
   </style>
 </head>
+
 <body>
 
   <div class="left-pane">
-    <div class="category"><%= category %></div>
-    <div class="title"><%= insight.title %></div>
-    <div class="summary"><%= insight.summary %></div>
-    
+    <div class="category">
+      <%= category %>
+    </div>
+    <div class="title">
+      <%= insight.title %>
+    </div>
+    <div class="summary">
+      <%= insight.summary %>
+    </div>
+
     <div class="insight-box">
       <div class="insight-label">Engineer Insight</div>
-      <div class="insight-text"><%= insight.insight %></div>
+      <div class="insight-text">
+        <%= insight.insight %>
+      </div>
     </div>
 
     <div class="source">
-      Source: <strong><%= insight.sourceName %></strong> | <span><%= insight.sourceUrl %></span>
+      Source: <strong>
+        <%= insight.sourceName %>
+      </strong>
     </div>
   </div>
 
@@ -168,4 +182,5 @@
   </div>
 
 </body>
+
 </html>

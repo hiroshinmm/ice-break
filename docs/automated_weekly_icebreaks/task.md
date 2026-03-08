@@ -18,3 +18,8 @@
   - [x] Nodemailer によるリッチなメール送信 (`src/sendNotification.js`)
   - [x] スマートフォンでの閲覧に最適化した1カラムUIのレイアウト実装 (テキストと画像の交互表示)
   - [x] 生成スライド画像（PNG形式）のインライン埋め込みとWeb拡大リンクの実装
+- [x] Phase 4: コンテンツとレイアウトの最終調整
+  - [x] GitHub ActionsネイティブのPages自動デプロイ機能への移行 (`actions/deploy-pages@v4`)
+  - [x] 「AI」カテゴリの新設と先頭配置 (`src/config.js`)
+  - [x] スライド内出典テキストからのURL除去 (`src/templates/slide.ejs`)
+  - [x] メールテキスト本文への Gemini Insight 文章の埋め込み

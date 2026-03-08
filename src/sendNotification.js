@@ -67,8 +67,12 @@ async function main() {
         <div style="margin-bottom: 8px;">
           <strong style="font-size: 16px; color: #333;">${insight.title}</strong>
         </div>
-        <div style="font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 15px;">
+        <div style="font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 10px;">
           ${insight.summary}
+        </div>
+        <div style="font-size: 13px; color: #333; line-height: 1.6; background-color: #eef7ff; padding: 12px; border-radius: 6px; margin-bottom: 15px; border-left: 3px solid #4A90E2;">
+          <strong>💡 INSIGHT:</strong><br>
+          ${insight.insight}
         </div>
         <div style="margin-bottom: 15px; text-align: center;">
           <a href="${imgWebUrl}" target="_blank" style="display: inline-block;">
