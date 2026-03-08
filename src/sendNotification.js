@@ -65,7 +65,9 @@ async function main() {
           <strong style="color: #4A90E2; font-size: 14px;">${category}</strong>
         </div>
         <div style="margin-bottom: 8px;">
-          <strong style="font-size: 16px; color: #333;">${insight.title}</strong>
+          <strong style="font-size: 16px;">
+            <a href="${insight.sourceUrl}" target="_blank" style="color: #333; text-decoration: none;">${insight.title}</a>
+          </strong>
         </div>
         <div style="font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 10px;">
           ${insight.summary}

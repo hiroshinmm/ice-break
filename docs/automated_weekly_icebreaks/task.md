@@ -23,3 +23,4 @@
   - [x] 「AI」カテゴリの新設と先頭配置 (`src/config.js`)
   - [x] スライド内出典テキストからのURL除去 (`src/templates/slide.ejs`)
   - [x] メールテキスト本文への Gemini Insight 文章の埋め込み
+  - [x] Webギャラリーおよびメール内の記事タイトルをソース元記事へのリンク化
