@@ -39,7 +39,7 @@ async function main() {
         // Sanitize category name for filename
         const safeName = category.replace(/[^a-z0-9]/gi, '_').toLowerCase();
         const htmlFile = path.join(htmlOutDir, `${safeName}.html`);
-        const imgFileName = `${safeName}.png`;
+        const imgFileName = `${safeName}.jpg`;
         const imgFileFull = path.join(imageOutDir, imgFileName);
 
         // source.unsplash.com is deprecated and often returns blank.
@@ -94,7 +94,7 @@ async function main() {
     for (const item of filesToCapture) {
         console.log(`Capturing: ${item.category}`);
         await page.goto(`file://${item.htmlFile}`, { waitUntil: 'networkidle0' });
-        await page.screenshot({ path: item.imgFile, type: 'png' });
+        await page.screenshot({ path: item.imgFile, type: 'jpeg', quality: 80 });
         console.log(`Saved image: ${item.imgFile}`);
     }
 

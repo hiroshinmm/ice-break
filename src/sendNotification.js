@@ -57,7 +57,7 @@ async function main() {
 
     const safeName = category.replace(/[^a-z0-9]/gi, '_').toLowerCase();
     const cid = safeName;
-    const imgWebUrl = GITHUB_PAGES_URL ? `${GITHUB_PAGES_URL}images/${safeName}.png` : '#';
+    const imgWebUrl = GITHUB_PAGES_URL ? `${GITHUB_PAGES_URL}images/${safeName}.jpg` : '#';
 
     htmlContent += `
       <div style="border: 1px solid #eee; border-radius: 8px; padding: 15px; background: #fafafa; margin-bottom: 30px; display: block; overflow: hidden;">
