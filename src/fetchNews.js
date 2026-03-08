@@ -6,6 +6,9 @@ const config = require('./config');
 const parser = new Parser({
     headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+    },
+    xml2js: {
+        strict: false, // Handle malformed XML like "Attribute without value"
     }
 });
 
@@ -32,6 +35,7 @@ async function fetchCategoryNews(urls, days) {
             })));
         } catch (error) {
             console.error(`Error fetching ${url}:`, error.message);
+            // Skip this feed and continue parsing others
         }
     }
     return allItems;
