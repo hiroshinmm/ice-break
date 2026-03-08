@@ -11,8 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     
     # Allow pushing to the repository for Pages
+    # Required permissions for GitHub Pages
     permissions:
-      contents: write
+      contents: read
+      pages: write
+      id-token: write
       
     steps:
       - name: Checkout repository
@@ -42,14 +45,18 @@ jobs:
       - name: Generate & Capture Slides
         run: node src/captureSlides.js
 
-      # Step 4: Deploy to GitHub Pages (gh-pages branch)
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      # Step 4: Setup, Build and Deploy to GitHub Pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact for Pages
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          # Only keep the latest generate images to save history space
-          force_orphan: true
+          path: './dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
 
       # Step 5: Send Email Notification
       - name: Send Notification
