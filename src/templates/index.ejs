@@ -2,8 +2,9 @@
 <html lang="ja">
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <title>Weekly Tech Briefing</title>
+    <title>Daily Tech Briefing</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap');
 
@@ -178,8 +179,8 @@
 <body>
 
     <header>
-        <h1>Weekly Tech Briefing</h1>
-        <p>Automated Insights for Display Software Engineers - <%= new Date().toISOString().split('T')[0] %>
+        <h1>Daily Tech Briefing</h1>
+        <p>Latest summaries from <%= new Date().toLocaleDateString('ja-JP') %>
         </p>
     </header>
 
