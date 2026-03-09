@@ -29,20 +29,6 @@ async function main() {
     const filesToCapture = [];
     const slidesForIndex = [];
 
-    // Predefined high-quality Unsplash image IDs
-    const imageMap = {
-        "ai": "photo-1677442136019-21780ecad995",
-        "srd / xr": "photo-1622979135225-d2ba269cf1ac",
-        "gaming monitor": "photo-1542744173-8e7e53415bb0",
-        "production monitor": "photo-1492691527719-9d1e07e534b4", // Updated for stability
-        "camera control": "photo-1516035069371-29a1b244cc32",
-        "projector": "photo-1585771724684-38269d6639fd",
-        "led wall display": "photo-1550745165-9bc0b252726f",
-        "tv": "photo-1593359677879-a4bb92f829d1",
-        "sony": "photo-1616423640778-28d1b53229bd",
-        "tcl": "photo-1593784991095-a205069470b6"
-    };
-
     for (const [category, insight] of Object.entries(insightsData)) {
         if (!insight) continue;
 
@@ -53,12 +39,22 @@ async function main() {
         const pngFileFull = path.join(imageOutDir, pngFileName);
         const jpgFileFull = path.join(imageOutDir, jpgFileName);
 
-        // Normalize category name strictly for mapping
-        const normCategory = category.toLowerCase().replace(/\s+/g, ' ').trim();
-        const photoId = imageMap[normCategory] || "photo-1451187580459-43490279c0fa";
-        const imageUrl = `https://images.unsplash.com/${photoId}?q=80&w=1920&h=1080&auto=format&fit=crop`;
+        // Dynamic Keyword Search Strategy
+        // Extract 2-3 main keywords from imagePrompt or use category as fallback
+        let keywords = category;
+        if (insight.imagePrompt) {
+            keywords = insight.imagePrompt
+                .split(',')
+                .slice(0, 3) // Take first 3 descriptive segments
+                .join(',')
+                .replace(/no text|8k|resolution|hyper-realistic/gi, '') // Remove technical jargon
+                .trim();
+        }
 
-        console.log(`[DEBUG] Category: "${category}" -> Norm: "${normCategory}" -> PhotoId: ${photoId}`);
+        // Use Unsplash Source for keyword-based random images
+        const imageUrl = `https://source.unsplash.com/featured/1920x1080/?${encodeURIComponent(keywords)}`;
+
+        console.log(`[DEBUG] Category: "${category}" -> Search Keywords: "${keywords}" -> URL: ${imageUrl}`);
 
         const htmlContent = ejs.render(templateString, {
             category: category,
