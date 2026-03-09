@@ -39,22 +39,22 @@ async function main() {
         const pngFileFull = path.join(imageOutDir, pngFileName);
         const jpgFileFull = path.join(imageOutDir, jpgFileName);
 
-        // Dynamic Keyword Search Strategy
-        // Extract 2-3 main keywords from imagePrompt or use category as fallback
+        // Dynamic Keyword Search Strategy (v3 - High Relevance)
+        // Focus on maximum uniqueness to the specific news topic.
         let keywords = category;
-        if (insight.imagePrompt) {
-            keywords = insight.imagePrompt
-                .split(',')
-                .slice(0, 3) // Take first 3 descriptive segments
-                .join(',')
-                .replace(/no text|8k|resolution|hyper-realistic/gi, '') // Remove technical jargon
-                .trim();
+        if (insight.imageKeywords) {
+            keywords = insight.imageKeywords;
+        } else if (insight.imagePrompt) {
+            keywords = insight.imagePrompt;
         }
 
-        // Use Unsplash Source for keyword-based random images
-        const imageUrl = `https://source.unsplash.com/featured/1920x1080/?${encodeURIComponent(keywords)}`;
+        // Convert the string into tags by replacing spaces/delimiters with commas
+        const queryTags = keywords.replace(/[\s\-_]+/g, ',').replace(/[^a-z0-9,]/gi, '').toLowerCase();
 
-        console.log(`[DEBUG] Category: "${category}" -> Search Keywords: "${keywords}" -> URL: ${imageUrl}`);
+        // Use LoremFlickr with all tags for better uniqueness
+        const imageUrl = `https://loremflickr.com/1920/1080/${encodeURIComponent(queryTags)}/all`;
+
+        console.log(`[DEBUG] Category: "${category}" -> Tags: "${queryTags}"`);
 
         const htmlContent = ejs.render(templateString, {
             category: category,

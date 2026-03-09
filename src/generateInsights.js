@@ -57,8 +57,8 @@ Output a valid JSON object with the following structure:
   "insight": "A deep insight 'INSIGHT' tailored for display software engineers. Why does this matter? What is the technical implication? (Japanese, 3-4 sentences)",
   "sourceUrl": "The exact URL of the picked article from the provided list",
   "sourceName": "The name of the source (e.g. 4Gamer, The Verge)",
-  "imagePrompt": "An english prompt for image generation AI (detailed)",
-  "imageKeywords": "2-3 simple english keywords for stock photo search (e.g. 'robot,lab')"
+  "imagePrompt": "A detailed english prompt for image generation AI",
+  "imageKeywords": "Most relevant and specific keywords for this news topic, comma-separated (e.g. 'quantum supercomputer,Sony lab,laser display')"
 }
 
 Here are the recent news articles:
