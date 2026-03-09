@@ -39,29 +39,15 @@ async function main() {
         const pngFileFull = path.join(imageOutDir, pngFileName);
         const jpgFileFull = path.join(imageOutDir, jpgFileName);
 
-        // Dynamic Keyword Search Strategy (v4 - Stability & Variety)
-        // Clean up keywords, limit to top 3 for better matching, and add random seed.
-        let rawKeywords = category;
-        if (insight.imageKeywords) {
-            rawKeywords = insight.imageKeywords;
-        } else if (insight.imagePrompt) {
-            rawKeywords = insight.imagePrompt;
-        }
+        // AI Image Generation Strategy (Pollinations.ai)
+        // Use the detailed imagePrompt from Gemini to generate a unique visual.
+        const seed = Math.floor(Math.random() * 1000000);
+        let prompt = insight.imagePrompt || `A futuristic technology concept related to ${category}, cinematic lighting, high quality`;
 
-        // Split by comma or space/dot, filter out empty/short words, and take top 3
-        const tagList = rawKeywords
-            .split(/[,\s.]+/)
-            .map(t => t.replace(/[^a-z0-9]/gi, '').toLowerCase())
-            .filter(t => t.length > 2)
-            .slice(0, 3);
+        // Build Pollinations.ai URL (1024x1024 is optimal for consistency and slide layout)
+        const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1024&height=1024&nologo=true&seed=${seed}`;
 
-        const queryTags = tagList.join(',');
-
-        // Use LoremFlickr without /all (too restrictive) and add a random lock to prevent identical images
-        const randomLock = Math.floor(Math.random() * 1000000);
-        const imageUrl = `https://loremflickr.com/1920/1080/${encodeURIComponent(queryTags)}?lock=${randomLock}`;
-
-        console.log(`[DEBUG] Category: "${category}" -> Search Tags: "${queryTags}" -> URL: ${imageUrl}`);
+        console.log(`[DEBUG] Category: "${category}" -> Generating AI Image with prompt: "${prompt.substring(0, 50)}..."`);
 
         const htmlContent = ejs.render(templateString, {
             category: category,
@@ -103,13 +89,13 @@ async function main() {
                     img.onload = resolve;
                     img.onerror = resolve; // resolve anyway
                     // Set timeout in case it hangs
-                    setTimeout(resolve, 5000);
+                    setTimeout(resolve, 10000); // Increased timeout for AI generation
                 });
             }));
         });
 
-        // Extra buffer for rendering
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Extra buffer for AI image rendering
+        await new Promise(resolve => setTimeout(resolve, 3000));
 
         // 1. Web PNG (High Res)
         await page.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 2 });
