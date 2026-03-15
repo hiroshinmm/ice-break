@@ -156,22 +156,16 @@ async function fetchCategoryNews(urls, days, browser) {
             for (const item of recentItems) {
                 let link = item.link;
                 if (link.includes('news.google.com')) {
-                    // 1. まず高速なバイナリデコードを試行
+                    // 高速な解決ロジックのみをループ内で実行
                     const decoded = decodeGoogleNewsUrl(link);
                     if (decoded && !decoded.includes('news.google.com')) {
                         link = decoded;
                     } else {
-                        // 2. 次に高速なfetchベースのオンライン解決を試行
-                        let resolved = await resolveUrlOnline(link);
-                        if (resolved.includes('news.google.com') && browser) {
-                            // 3. 最終手段としてPuppeteerを使用（確実性が高いが低速）
-                            resolved = await resolveUrlWithPuppeteer(link, browser);
-                        }
-                        link = resolved;
+                        link = await resolveUrlOnline(link);
                     }
                 }
 
-                // Try to extract image URL from RSS
+                // ループ内ではRSSからの画像抽出のみを行い、スクレイピング（fetchOgImage）は後回しにする
                 let imageUrl = null;
                 if (item.enclosure && item.enclosure.url) {
                     imageUrl = item.enclosure.url;
@@ -181,11 +175,6 @@ async function fetchCategoryNews(urls, days, browser) {
                     imageUrl = item.mediaThumbnail.$.url;
                 } else if (item.image) {
                     imageUrl = typeof item.image === 'string' ? item.image : (item.image.url || null);
-                }
-
-                // If no image in RSS, try scraping OG image from the resolved link
-                if (!imageUrl && link && !link.includes('news.google.com')) {
-                    imageUrl = await fetchOgImage(link);
                 }
 
                 allItems.push({
@@ -234,9 +223,24 @@ async function main() {
                 }
             }
 
-            // Keep max 20 items per category to avoid overloading token limits
-            results[category] = uniqueItems.slice(0, 20);
-            console.log(`Found ${uniqueItems.length} recent news items for ${category}. Saving top ${results[category].length}.`);
+            // 選別された上位アイテムのみ、重い解決処理（Puppeteer / OG Image抽出）を実行する
+            const topItems = uniqueItems.slice(0, 20);
+            console.log(`Processing deep resolution for top ${topItems.length} items in ${category}...`);
+            
+            for (const item of topItems) {
+                // まだGoogle Newsリンクのままなら、Puppeteerで解決を試みる
+                if (item.link.includes('news.google.com')) {
+                    item.link = await resolveUrlWithPuppeteer(item.link, browser);
+                }
+                
+                // 画像がない場合はOGPスクレイピングを試みる
+                if (!item.imageUrl && item.link && !item.link.includes('google.com')) {
+                    item.imageUrl = await fetchOgImage(item.link);
+                }
+            }
+
+            results[category] = topItems;
+            console.log(`Found ${uniqueItems.length} recent news items for ${category}. Saved top ${results[category].length}.`);
         }
     } finally {
         await browser.close();
