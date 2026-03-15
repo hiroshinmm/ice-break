@@ -41,19 +41,22 @@ async function main() {
 
         // Image Selection Logic: Prioritize original image from news site, fallback to local default icon.
         let imageUrl = insight.originalImageUrl;
+        let isDefaultImage = false;
         if (imageUrl) {
             console.log(`[INFO] Category: "${category}" -> Original image found. Using: "${imageUrl.substring(0, 60)}..."`);
         } else {
-            // Using the user-selected default icon (Sample 1)
+            // Using the user-selected default icon
             const defaultIconPath = path.resolve(__dirname, 'assets', 'default_news.png');
             imageUrl = `file://${defaultIconPath}`;
+            isDefaultImage = true;
             console.log(`[INFO] Category: "${category}" -> No original image. Using local default icon.`);
         }
 
         const htmlContent = ejs.render(templateString, {
             category: category,
             insight: insight,
-            imageUrl: imageUrl
+            imageUrl: imageUrl,
+            isDefaultImage: isDefaultImage
         });
 
         fs.writeFileSync(htmlFile, htmlContent, 'utf-8');
