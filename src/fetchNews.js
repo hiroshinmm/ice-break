@@ -1,5 +1,4 @@
 const Parser = require('rss-parser');
-const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
 const config = require('./config');
@@ -94,34 +93,6 @@ async function resolveUrlOnline(googleUrl) {
 }
 
 /**
- * Puppeteerを使用してリダイレクトを完全に追跡し、最終的なURLを取得する
- */
-async function resolveUrlWithPuppeteer(googleUrl, browser) {
-    let page = null;
-    try {
-        page = await browser.newPage();
-        await page.setUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1');
-        
-        // Wait for navigation and potential redirects
-        await page.goto(googleUrl, { waitUntil: 'networkidle2', timeout: 30000 });
-        
-        // Google Newsのリダイレクトはページ内JSで行われることがあるため、URLが変わるのを待つ
-        try {
-            await page.waitForFunction(() => !window.location.href.includes('google.com'), { timeout: 10000 });
-        } catch (e) {
-            // Timeout if it doesn't redirect, but we'll still take the current URL
-        }
-
-        const finalUrl = page.url();
-        return finalUrl;
-    } catch (e) {
-        return googleUrl;
-    } finally {
-        if (page) await page.close();
-    }
-}
-
-/**
  * 記事のHTMLからOG画像を抽出する
  */
 async function fetchOgImage(url) {
@@ -146,7 +117,7 @@ async function fetchOgImage(url) {
     }
 }
 
-async function fetchCategoryNews(urls, days, browser) {
+async function fetchCategoryNews(urls, days) {
     let allItems = [];
     for (const url of urls) {
         try {
@@ -197,53 +168,28 @@ async function main() {
     console.log('Fetching news...');
     const results = {};
 
-    // 解決の確実性を高めるため、Puppeteerのブラウザを1つ起動して使い回す
-    const browser = await puppeteer.launch({
-        headless: "new",
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
+    for (const [category, urls] of Object.entries(config.feeds)) {
+        console.log(`Processing category: ${category}`);
+        const items = await fetchCategoryNews(urls, config.DAYS_TO_FETCH);
 
-    try {
-        for (const [category, urls] of Object.entries(config.feeds)) {
-            console.log(`Processing category: ${category}`);
-            const items = await fetchCategoryNews(urls, config.DAYS_TO_FETCH, browser);
+        // Sort by date (newest first)
+        items.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
 
-            // Sort by date (newest first)
-            items.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-
-            // Remove duplicates based on link or title
-            const uniqueItems = [];
-            const seenLinks = new Set();
-            const seenTitles = new Set();
-            for (const item of items) {
-                if (!seenLinks.has(item.link) && !seenTitles.has(item.title)) {
-                    uniqueItems.push(item);
-                    seenLinks.add(item.link);
-                    seenTitles.add(item.title);
-                }
+        // Remove duplicates based on link or title
+        const uniqueItems = [];
+        const seenLinks = new Set();
+        const seenTitles = new Set();
+        for (const item of items) {
+            if (!seenLinks.has(item.link) && !seenTitles.has(item.title)) {
+                uniqueItems.push(item);
+                seenLinks.add(item.link);
+                seenTitles.add(item.title);
             }
-
-            // 選別された上位アイテムのみ、重い解決処理（Puppeteer / OG Image抽出）を実行する
-            const topItems = uniqueItems.slice(0, 20);
-            console.log(`Processing deep resolution for top ${topItems.length} items in ${category}...`);
-            
-            for (const item of topItems) {
-                // まだGoogle Newsリンクのままなら、Puppeteerで解決を試みる
-                if (item.link.includes('news.google.com')) {
-                    item.link = await resolveUrlWithPuppeteer(item.link, browser);
-                }
-                
-                // 画像がない場合はOGPスクレイピングを試みる
-                if (!item.imageUrl && item.link && !item.link.includes('google.com')) {
-                    item.imageUrl = await fetchOgImage(item.link);
-                }
-            }
-
-            results[category] = topItems;
-            console.log(`Found ${uniqueItems.length} recent news items for ${category}. Saved top ${results[category].length}.`);
         }
-    } finally {
-        await browser.close();
+
+        // Keep top 20 items per category
+        results[category] = uniqueItems.slice(0, 20);
+        console.log(`Found ${uniqueItems.length} recent news items for ${category}. Saving top ${results[category].length}.`);
     }
 
     const outDir = path.join(__dirname, '..', 'data');
