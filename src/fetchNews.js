@@ -17,13 +17,77 @@ const parser = new Parser({
     }
 });
 
-const isRecent = (dateStr, days) => {
-    if (!dateStr) return false;
-    const pubDate = new Date(dateStr);
-    const cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - days);
-    return pubDate >= cutoff;
-};
+/**
+ * Google NewsのリンクからオリジナルのURLを抽出する（Base64デコード）
+ */
+function decodeGoogleNewsUrl(encodedUrl) {
+    if (!encodedUrl.includes('news.google.com')) return encodedUrl;
+    try {
+        const urlObj = new URL(encodedUrl);
+        const pathParts = urlObj.pathname.split('/');
+        const base64Str = pathParts[pathParts.length - 1];
+
+        // Base64デコード（binaryとして読み込む）
+        const decoded = Buffer.from(base64Str, 'base64').toString('binary');
+        const start = decoded.indexOf('http');
+        if (start === -1) return encodedUrl;
+
+        let url = decoded.substring(start);
+        const match = url.match(/[^\x20-\x7E]/);
+        if (match) {
+            url = url.substring(0, match.index);
+        }
+        return url;
+    } catch (e) {
+        return encodedUrl;
+    }
+}
+
+/**
+ * オンラインでリダイレクトを追跡してURLを解決する
+ */
+async function resolveUrlOnline(googleUrl) {
+    try {
+        const response = await fetch(googleUrl, {
+            method: 'GET',
+            redirect: 'follow',
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            }
+        });
+        const text = await response.text();
+        const refreshMatch = text.match(/url=(http[^"]+)"/i);
+        if (refreshMatch) return refreshMatch[1];
+        const dataUrlMatch = text.match(/data-url="([^"]+)"/);
+        if (dataUrlMatch) return dataUrlMatch[1];
+        return response.url;
+    } catch (e) {
+        return googleUrl;
+    }
+}
+
+/**
+ * 記事のHTMLからOG画像を抽出する
+ */
+async function fetchOgImage(url) {
+    try {
+        const response = await fetch(url, {
+            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
+        });
+        const text = await response.text();
+        const ogImageMatch = text.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i) ||
+                             text.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/i);
+        if (ogImageMatch) return ogImageMatch[1];
+
+        const twitterImageMatch = text.match(/<meta[^>]*name=["']twitter:image["'][^>]*content=["']([^"']+)["']/i) ||
+                                  text.match(/<meta[^>]*content=["']([^"']+)["'][^>]*name=["']twitter:image["']/i);
+        if (twitterImageMatch) return twitterImageMatch[1];
+
+        return null;
+    } catch (e) {
+        return null;
+    }
+}
 
 async function fetchCategoryNews(urls, days) {
     let allItems = [];
@@ -31,8 +95,17 @@ async function fetchCategoryNews(urls, days) {
         try {
             const feed = await parser.parseURL(url);
             const recentItems = feed.items.filter(item => isRecent(item.isoDate || item.pubDate, days));
-            allItems.push(...recentItems.map(item => {
-                // Try to extract image URL
+            
+            for (const item of recentItems) {
+                let link = item.link;
+                if (link.includes('news.google.com')) {
+                    link = decodeGoogleNewsUrl(link);
+                    if (link.includes('news.google.com')) {
+                        link = await resolveUrlOnline(link);
+                    }
+                }
+
+                // Try to extract image URL from RSS
                 let imageUrl = null;
                 if (item.enclosure && item.enclosure.url) {
                     imageUrl = item.enclosure.url;
@@ -44,18 +117,22 @@ async function fetchCategoryNews(urls, days) {
                     imageUrl = typeof item.image === 'string' ? item.image : (item.image.url || null);
                 }
 
-                return {
+                // If no image in RSS, try scraping OG image from the resolved link
+                if (!imageUrl && link && !link.includes('news.google.com')) {
+                    imageUrl = await fetchOgImage(link);
+                }
+
+                allItems.push({
                     title: item.title,
-                    link: item.link,
+                    link: link,
                     pubDate: item.isoDate || item.pubDate,
                     source: feed.title || new URL(url).hostname,
                     imageUrl: imageUrl,
                     snippet: item.contentSnippet || item.content || ''
-                };
-            }));
+                });
+            }
         } catch (error) {
             console.error(`Error fetching ${url}:`, error.message);
-            // Skip this feed and continue parsing others
         }
     }
     return allItems;
