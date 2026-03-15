@@ -56,8 +56,7 @@ Output a valid JSON object with the following structure:
   "summary": "A summary of the news (Japanese, around 150 characters, capturing the main points clearly)",
   "insight": "A deep insight 'INSIGHT' tailored for display software engineers. Why does this matter? What is the technical implication? (Japanese, 3-4 sentences)",
   "sourceUrl": "The exact URL of the picked article from the provided list",
-  "sourceName": "The name of the source (e.g. 4Gamer, The Verge)",
-  "imagePrompt": "A highly detailed english prompt for a 16:9 AI image generator. Describe a sleek, professional, and futuristic scene related to the news. Include keywords like 'digital art, cinematic lighting, ultra-detailed, technical visualization, no text'."
+  "sourceName": "The name of the source (e.g. 4Gamer, The Verge)"
 }
 
 Here are the recent news articles:
