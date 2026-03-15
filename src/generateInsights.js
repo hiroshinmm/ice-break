@@ -55,20 +55,76 @@ async function resolveUrlOnline(googleUrl) {
 }
 
 /**
- * Puppeteerを使用してリダイレクトを完全に追跡する
+ * Puppeteerを使用してリダイレクトを完全に追跡し、ページ内の主要な画像も探す
  */
 async function resolveUrlWithPuppeteer(googleUrl, browser) {
     let page = null;
     try {
         page = await browser.newPage();
-        await page.setUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1');
+        await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+        
         await page.goto(googleUrl, { waitUntil: 'networkidle2', timeout: 30000 });
+        
         try {
             await page.waitForFunction(() => !window.location.href.includes('google.com'), { timeout: 10000 });
         } catch (e) {}
-        return page.url();
+
+        const finalUrl = page.url();
+        
+        // メタデータ、または本文内の「もっともらしい」画像を抽出する
+        const detectedImageUrl = await page.evaluate(() => {
+            // 1. OGP
+            const og = document.querySelector('meta[property="og:image"]');
+            if (og && og.content) return og.content;
+            
+            // 2. Twitter
+            const tw = document.querySelector('meta[name="twitter:image"]');
+            if (tw && tw.content) return tw.content;
+            
+            // 3. Heuristic: 記事本文(article, .content, .post, .field--name-body等)の中の大きな画像
+            const contentArea = document.querySelector('article, .content, .post, .entry-content, .field--name-body, main');
+                if (contentArea) {
+                    const imgs = Array.from(contentArea.querySelectorAll('img'))
+                        .filter(img => {
+                            const src = img.src || '';
+                            const isVisible = img.offsetWidth > 10 && img.offsetHeight > 10;
+                            const ratio = img.offsetWidth / img.offsetHeight;
+                            // バナー（極端に横長/縦長）を除外: 0.5 < ratio < 3.0
+                            const hasGoodRatio = ratio > 0.5 && ratio < 3.0;
+                            
+                            return src.startsWith('http') && 
+                                   isVisible &&
+                                   hasGoodRatio &&
+                                   !src.toLowerCase().includes('ads') && 
+                                   !src.toLowerCase().includes('banner') &&
+                                   !src.toLowerCase().includes('matomo') &&
+                                   !src.toLowerCase().includes('pixel') &&
+                                   !src.toLowerCase().includes('icon') &&
+                                   !src.toLowerCase().includes('logo');
+                        })
+                        .sort((a, b) => {
+                            // JPG, PNGをGIFより優先する（GIFはバナーが多い）
+                            const scoreA = (a.src.toLowerCase().endsWith('.gif') ? 0 : 1) * (a.offsetWidth * a.offsetHeight);
+                            const scoreB = (b.src.toLowerCase().endsWith('.gif') ? 0 : 1) * (b.offsetWidth * b.offsetHeight);
+                            return scoreB - scoreA;
+                        });
+                    
+                    if (imgs.length > 0) {
+                        return imgs[0].src;
+                    }
+                }
+            
+            // 4. Fallback: ページ全体の画像から最大のもの
+            const allImgs = Array.from(document.querySelectorAll('img'))
+                .filter(img => img.offsetWidth > 300)
+                .sort((a, b) => (b.offsetWidth * b.offsetHeight) - (a.offsetWidth * a.offsetHeight));
+                
+            return allImgs.length > 0 ? allImgs[0].src : null;
+        });
+
+        return { finalUrl, detectedImageUrl };
     } catch (e) {
-        return googleUrl;
+        return { finalUrl: googleUrl, detectedImageUrl: null };
     } finally {
         if (page) await page.close();
     }
@@ -179,13 +235,17 @@ ${newsText}
                         resolved = await resolveUrlOnline(pickedItem.link);
                     }
                     if (resolved.includes('news.google.com')) {
-                        resolved = await resolveUrlWithPuppeteer(pickedItem.link, browser);
+                        const result = await resolveUrlWithPuppeteer(pickedItem.link, browser);
+                        resolved = result.finalUrl;
+                        if (result.detectedImageUrl) {
+                            pickedItem.imageUrl = result.detectedImageUrl;
+                        }
                     }
                     pickedItem.link = resolved;
                     parsed.sourceUrl = resolved;
                 }
 
-                // 画像がない、またはリンクが解決された場合はOGP取得を試みる
+                // 画像がない、またはリンクが解決された場合はOGP取得を試みる（Puppeteerで取れなかった場合のみ）
                 if (!pickedItem.imageUrl && !pickedItem.link.includes('google.com')) {
                     console.log(`Fetching OG image for: ${pickedItem.link.substring(0, 50)}...`);
                     pickedItem.imageUrl = await fetchOgImage(pickedItem.link);
