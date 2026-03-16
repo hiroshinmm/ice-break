@@ -66,11 +66,11 @@ async function resolveUrlWithPuppeteer(googleUrl, browser) {
         await page.goto(googleUrl, { waitUntil: 'networkidle2', timeout: 30000 });
         
         try {
-            await page.waitForFunction(() => !window.location.href.includes('google.com'), { timeout: 10000 });
-        } catch (e) {}
+            await page.waitForFunction(() => !window.location.href.includes('google.com'), { timeout: 15000 });
+        } catch (e) {
+            console.log(`[LOG] Puppeteer redirect wait timed out or still on google. Current URL: ${page.url()}`);
+        }
 
-        const finalUrl = page.url();
-        
         // メタデータ、または本文内の「もっともらしい」画像を抽出する
         const detectedImageUrl = await page.evaluate(() => {
             // 1. OGP
@@ -80,7 +80,7 @@ async function resolveUrlWithPuppeteer(googleUrl, browser) {
             // 2. Twitter
             const tw = document.querySelector('meta[name="twitter:image"]');
             if (tw && tw.content) return tw.content;
-            
+
             // 3. LD+JSON (Structured Data) - Good for AMP
             const ldTags = Array.from(document.querySelectorAll('script[type="application/ld+json"]'));
             for (const ld of ldTags) {
@@ -94,7 +94,6 @@ async function resolveUrlWithPuppeteer(googleUrl, browser) {
                             if (obj.image.url) return obj.image.url;
                         }
                         if (obj.thumbnailUrl) return obj.thumbnailUrl;
-                        // For nested Graph objects
                         if (obj['@graph'] && Array.isArray(obj['@graph'])) {
                             for (const g of obj['@graph']) {
                                 const found = findImage(g);
@@ -107,13 +106,13 @@ async function resolveUrlWithPuppeteer(googleUrl, browser) {
                     if (found && !found.startsWith('data:')) return found;
                 } catch(e) {}
             }
-            
+
             // 4. AMP Image fallback
             const ampImg = document.querySelector('amp-img');
             if (ampImg && ampImg.src && !ampImg.src.startsWith('data:')) return ampImg.src;
 
             // 5. Heuristic: 記事本文内の大きな画像
-            const contentArea = document.querySelector('article, .content, .post, .entry-content, .field--name-body, main');
+            const contentArea = document.querySelector('article, .content, .post, .entry-content, .field--name-body, .article-content, .post-content, main');
                 if (contentArea) {
                     const imgs = Array.from(contentArea.querySelectorAll('img'))
                         .filter(img => {
@@ -153,6 +152,7 @@ async function resolveUrlWithPuppeteer(googleUrl, browser) {
             return allImgs.length > 0 ? allImgs[0].src : null;
         });
 
+        const finalUrl = page.url();
         return { finalUrl, detectedImageUrl };
     } catch (e) {
         return { finalUrl: googleUrl, detectedImageUrl: null };
