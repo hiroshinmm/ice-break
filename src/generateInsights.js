@@ -81,7 +81,38 @@ async function resolveUrlWithPuppeteer(googleUrl, browser) {
             const tw = document.querySelector('meta[name="twitter:image"]');
             if (tw && tw.content) return tw.content;
             
-            // 3. Heuristic: 記事本文(article, .content, .post, .field--name-body等)の中の大きな画像
+            // 3. LD+JSON (Structured Data) - Good for AMP
+            const ldTags = Array.from(document.querySelectorAll('script[type="application/ld+json"]'));
+            for (const ld of ldTags) {
+                try {
+                    const data = JSON.parse(ld.innerText);
+                    const findImage = (obj) => {
+                        if (!obj) return null;
+                        if (obj.image) {
+                            if (typeof obj.image === 'string') return obj.image;
+                            if (Array.isArray(obj.image) && obj.image[0]) return typeof obj.image[0] === 'string' ? obj.image[0] : (obj.image[0].url || null);
+                            if (obj.image.url) return obj.image.url;
+                        }
+                        if (obj.thumbnailUrl) return obj.thumbnailUrl;
+                        // For nested Graph objects
+                        if (obj['@graph'] && Array.isArray(obj['@graph'])) {
+                            for (const g of obj['@graph']) {
+                                const found = findImage(g);
+                                if (found) return found;
+                            }
+                        }
+                        return null;
+                    };
+                    const found = findImage(data);
+                    if (found && !found.startsWith('data:')) return found;
+                } catch(e) {}
+            }
+            
+            // 4. AMP Image fallback
+            const ampImg = document.querySelector('amp-img');
+            if (ampImg && ampImg.src && !ampImg.src.startsWith('data:')) return ampImg.src;
+
+            // 5. Heuristic: 記事本文内の大きな画像
             const contentArea = document.querySelector('article, .content, .post, .entry-content, .field--name-body, main');
                 if (contentArea) {
                     const imgs = Array.from(contentArea.querySelectorAll('img'))
@@ -89,10 +120,10 @@ async function resolveUrlWithPuppeteer(googleUrl, browser) {
                             const src = img.src || '';
                             const isVisible = img.offsetWidth > 10 && img.offsetHeight > 10;
                             const ratio = img.offsetWidth / img.offsetHeight;
-                            // バナー（極端に横長/縦長）を除外: 0.5 < ratio < 3.0
                             const hasGoodRatio = ratio > 0.5 && ratio < 3.0;
                             
                             return src.startsWith('http') && 
+                                   !src.startsWith('data:') && // Exclude base64
                                    isVisible &&
                                    hasGoodRatio &&
                                    !src.toLowerCase().includes('ads') && 
@@ -100,23 +131,23 @@ async function resolveUrlWithPuppeteer(googleUrl, browser) {
                                    !src.toLowerCase().includes('matomo') &&
                                    !src.toLowerCase().includes('pixel') &&
                                    !src.toLowerCase().includes('icon') &&
-                                   !src.toLowerCase().includes('logo');
+                                   !src.toLowerCase().includes('logo') &&
+                                   !src.toLowerCase().includes('avatar') &&
+                                   !src.toLowerCase().includes('gravatar') &&
+                                   !src.toLowerCase().includes('profile');
                         })
                         .sort((a, b) => {
-                            // JPG, PNGをGIFより優先する（GIFはバナーが多い）
                             const scoreA = (a.src.toLowerCase().endsWith('.gif') ? 0 : 1) * (a.offsetWidth * a.offsetHeight);
                             const scoreB = (b.src.toLowerCase().endsWith('.gif') ? 0 : 1) * (b.offsetWidth * b.offsetHeight);
                             return scoreB - scoreA;
                         });
                     
-                    if (imgs.length > 0) {
-                        return imgs[0].src;
-                    }
+                    if (imgs.length > 0) return imgs[0].src;
                 }
             
-            // 4. Fallback: ページ全体の画像から最大のもの
+            // 4. Fallback: ページ全体の画像から一定サイズ以上のものを抽出
             const allImgs = Array.from(document.querySelectorAll('img'))
-                .filter(img => img.offsetWidth > 300)
+                .filter(img => img.offsetWidth > 100) // Lowered from 300 to 100 to catch smaller images like LEDInside
                 .sort((a, b) => (b.offsetWidth * b.offsetHeight) - (a.offsetWidth * a.offsetHeight));
                 
             return allImgs.length > 0 ? allImgs[0].src : null;
@@ -141,7 +172,8 @@ async function fetchOgImage(url, browser) {
             headers: { 
                 'User-Agent': userAgent,
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-                'Accept-Language': 'ja,en-US;q=0.9,en;q=0.8'
+                'Accept-Language': 'ja,en-US;q=0.9,en;q=0.8',
+                'Referer': url // Set Referer to article's own URL to bypass some blocks
             },
             signal: AbortSignal.timeout(10000) // 10s timeout
         });
@@ -149,17 +181,63 @@ async function fetchOgImage(url, browser) {
         if (response.ok) {
             const text = await response.text();
             let imgUrl = null;
+            
+            // 1. OGP
             const ogImageMatch = text.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i) ||
                                  text.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/i);
             if (ogImageMatch) imgUrl = ogImageMatch[1];
             
+            // 2. Twitter
             if (!imgUrl) {
                 const twitterImageMatch = text.match(/<meta[^>]*name=["']twitter:image["'][^>]*content=["']([^"']+)["']/i) ||
                                           text.match(/<meta[^>]*content=["']([^"']+)["'][^>]*name=["']twitter:image["']/i);
                 if (twitterImageMatch) imgUrl = twitterImageMatch[1];
             }
 
-            if (imgUrl) {
+            // 3. LD+JSON (Structured Data) - Good for AMP and Sony
+            if (!imgUrl) {
+                const ldJsonMatches = text.match(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi);
+                if (ldJsonMatches) {
+                    for (const scriptTag of ldJsonMatches) {
+                        try {
+                            const jsonContent = scriptTag.replace(/<script[^>]*>|<\/script>/gi, '').trim();
+                            const data = JSON.parse(jsonContent);
+                            const findImage = (obj) => {
+                                if (!obj) return null;
+                                if (obj.image) {
+                                    if (typeof obj.image === 'string') return obj.image;
+                                    if (Array.isArray(obj.image) && obj.image[0]) return typeof obj.image[0] === 'string' ? obj.image[0] : (obj.image[0].url || null);
+                                    if (obj.image.url) return obj.image.url;
+                                }
+                                if (obj.thumbnailUrl) return obj.thumbnailUrl;
+                                // Handle nested Graph
+                                if (obj['@graph'] && Array.isArray(obj['@graph'])) {
+                                    for (const g of obj['@graph']) {
+                                        const found = findImage(g);
+                                        if (found) return found;
+                                    }
+                                }
+                                return null;
+                            };
+                            const found = findImage(data);
+                            if (found && !found.startsWith('data:')) {
+                                imgUrl = found;
+                                break;
+                            }
+                        } catch (e) {}
+                    }
+                }
+            }
+
+            // 4. HTML Fallback: find first relevant looking img tag in content (crude regex)
+            if (!imgUrl) {
+                const imgTagMatch = text.match(/<img[^>]*src=["']([^"']+\.(?:jpg|jpeg|png|webp))["']/i);
+                if (imgTagMatch && !imgTagMatch[1].startsWith('data:') && !imgTagMatch[1].includes('icon') && !imgTagMatch[1].includes('logo') && !imgTagMatch[1].includes('avatar')) {
+                    imgUrl = imgTagMatch[1];
+                }
+            }
+
+            if (imgUrl && !imgUrl.startsWith('data:')) {
                 // Ensure absolute URL
                 if (imgUrl.startsWith('//')) {
                     imgUrl = 'https:' + imgUrl;
