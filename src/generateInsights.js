@@ -133,21 +133,39 @@ async function resolveUrlWithPuppeteer(googleUrl, browser) {
 /**
  * 記事のHTMLからOG画像を抽出する
  */
-async function fetchOgImage(url) {
+async function fetchOgImage(url, browser) {
     if (!url || url.includes('google.com')) return null;
     try {
         const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
-        const response = await fetch(url, { headers: { 'User-Agent': userAgent } });
-        const text = await response.text();
-        const ogImageMatch = text.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i) ||
-                             text.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/i);
-        if (ogImageMatch) return ogImageMatch[1];
-        const twitterImageMatch = text.match(/<meta[^>]*name=["']twitter:image["'][^>]*content=["']([^"']+)["']/i) ||
-                                  text.match(/<meta[^>]*content=["']([^"']+)["'][^>]*name=["']twitter:image["']/i);
-        return twitterImageMatch ? twitterImageMatch[1] : null;
+        const response = await fetch(url, { 
+            headers: { 
+                'User-Agent': userAgent,
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+                'Accept-Language': 'ja,en-US;q=0.9,en;q=0.8'
+            },
+            signal: AbortSignal.timeout(10000) // 10s timeout
+        });
+        
+        if (response.ok) {
+            const text = await response.text();
+            const ogImageMatch = text.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i) ||
+                                 text.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/i);
+            if (ogImageMatch) return ogImageMatch[1];
+            const twitterImageMatch = text.match(/<meta[^>]*name=["']twitter:image["'][^>]*content=["']([^"']+)["']/i) ||
+                                      text.match(/<meta[^>]*content=["']([^"']+)["'][^>]*name=["']twitter:image["']/i);
+            if (twitterImageMatch) return twitterImageMatch[1];
+        }
     } catch (e) {
-        return null;
+        console.log(`Simple fetch failed for ${url}: ${e.message}`);
     }
+
+    // Simple fetch failed or returned nothing, fallback to Puppeteer if provided
+    if (browser) {
+        console.log(`Falling back to Puppeteer for image extraction: ${url.substring(0, 50)}...`);
+        const result = await resolveUrlWithPuppeteer(url, browser);
+        return result.detectedImageUrl;
+    }
+    return null;
 }
 
 async function main() {
@@ -245,10 +263,10 @@ ${newsText}
                     parsed.sourceUrl = resolved;
                 }
 
-                // 画像がない、またはリンクが解決された場合はOGP取得を試みる（Puppeteerで取れなかった場合のみ）
+                // 画像がない、またはリンクが解決された場合はOGP取得を試みる（Puppeteerで取れなかった場合のみ、または解決済みリンクに対して）
                 if (!pickedItem.imageUrl && !pickedItem.link.includes('google.com')) {
                     console.log(`Fetching OG image for: ${pickedItem.link.substring(0, 50)}...`);
-                    pickedItem.imageUrl = await fetchOgImage(pickedItem.link);
+                    pickedItem.imageUrl = await fetchOgImage(pickedItem.link, browser);
                 }
 
                 if (pickedItem.imageUrl) {
