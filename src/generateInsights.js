@@ -148,12 +148,30 @@ async function fetchOgImage(url, browser) {
         
         if (response.ok) {
             const text = await response.text();
+            let imgUrl = null;
             const ogImageMatch = text.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i) ||
                                  text.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/i);
-            if (ogImageMatch) return ogImageMatch[1];
-            const twitterImageMatch = text.match(/<meta[^>]*name=["']twitter:image["'][^>]*content=["']([^"']+)["']/i) ||
-                                      text.match(/<meta[^>]*content=["']([^"']+)["'][^>]*name=["']twitter:image["']/i);
-            if (twitterImageMatch) return twitterImageMatch[1];
+            if (ogImageMatch) imgUrl = ogImageMatch[1];
+            
+            if (!imgUrl) {
+                const twitterImageMatch = text.match(/<meta[^>]*name=["']twitter:image["'][^>]*content=["']([^"']+)["']/i) ||
+                                          text.match(/<meta[^>]*content=["']([^"']+)["'][^>]*name=["']twitter:image["']/i);
+                if (twitterImageMatch) imgUrl = twitterImageMatch[1];
+            }
+
+            if (imgUrl) {
+                // Ensure absolute URL
+                if (imgUrl.startsWith('//')) {
+                    imgUrl = 'https:' + imgUrl;
+                } else if (imgUrl.startsWith('/')) {
+                    const urlObj = new URL(url);
+                    imgUrl = urlObj.origin + imgUrl;
+                } else if (!imgUrl.startsWith('http')) {
+                    const urlObj = new URL(url);
+                    imgUrl = urlObj.origin + (urlObj.pathname.endsWith('/') ? urlObj.pathname : path.dirname(urlObj.pathname) + '/') + imgUrl;
+                }
+                return imgUrl;
+            }
         }
     } catch (e) {
         console.log(`Simple fetch failed for ${url}: ${e.message}`);
@@ -270,7 +288,10 @@ ${newsText}
                 }
 
                 if (pickedItem.imageUrl) {
+                    console.log(`Setting final image URL: ${pickedItem.imageUrl}`);
                     parsed.originalImageUrl = pickedItem.imageUrl;
+                } else {
+                    console.log(`No image found for ${category}. Will use default icon.`);
                 }
 
                 insights[category] = parsed;
