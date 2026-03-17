@@ -88,12 +88,15 @@ async function resolveUrlWithPuppeteer(googleUrl, browser) {
                     const data = JSON.parse(ld.innerText);
                     const findImage = (obj) => {
                         if (!obj) return null;
+                        // Gravatar/Avatar を除外: 著者アイコンではなく記事画像を優先
+                        const isGood = (u) => u && !u.startsWith('data:') && !u.includes('gravatar') && !u.includes('avatar');
                         if (obj.image) {
-                            if (typeof obj.image === 'string') return obj.image;
-                            if (Array.isArray(obj.image) && obj.image[0]) return typeof obj.image[0] === 'string' ? obj.image[0] : (obj.image[0].url || null);
-                            if (obj.image.url) return obj.image.url;
+                            const img = typeof obj.image === 'string' ? obj.image
+                                : Array.isArray(obj.image) ? (typeof obj.image[0] === 'string' ? obj.image[0] : (obj.image[0] && obj.image[0].url))
+                                : obj.image.url;
+                            if (isGood(img)) return img;
                         }
-                        if (obj.thumbnailUrl) return obj.thumbnailUrl;
+                        if (isGood(obj.thumbnailUrl)) return obj.thumbnailUrl;
                         if (obj['@graph'] && Array.isArray(obj['@graph'])) {
                             for (const g of obj['@graph']) {
                                 const found = findImage(g);
@@ -103,7 +106,7 @@ async function resolveUrlWithPuppeteer(googleUrl, browser) {
                         return null;
                     };
                     const found = findImage(data);
-                    if (found && !found.startsWith('data:')) return found;
+                    if (found) return found;
                 } catch(e) {}
             }
 
@@ -204,12 +207,15 @@ async function fetchOgImage(url, browser) {
                             const data = JSON.parse(jsonContent);
                             const findImage = (obj) => {
                                 if (!obj) return null;
+                                // 画像がある場合、Gravatar アイコンは除外
+                                const isGood = (u) => u && !u.startsWith('data:') && !u.includes('gravatar') && !u.includes('avatar');
                                 if (obj.image) {
-                                    if (typeof obj.image === 'string') return obj.image;
-                                    if (Array.isArray(obj.image) && obj.image[0]) return typeof obj.image[0] === 'string' ? obj.image[0] : (obj.image[0].url || null);
-                                    if (obj.image.url) return obj.image.url;
+                                    const img = typeof obj.image === 'string' ? obj.image
+                                        : Array.isArray(obj.image) ? (typeof obj.image[0] === 'string' ? obj.image[0] : (obj.image[0] && obj.image[0].url))
+                                        : obj.image.url;
+                                    if (isGood(img)) return img;
                                 }
-                                if (obj.thumbnailUrl) return obj.thumbnailUrl;
+                                if (isGood(obj.thumbnailUrl)) return obj.thumbnailUrl;
                                 // Handle nested Graph
                                 if (obj['@graph'] && Array.isArray(obj['@graph'])) {
                                     for (const g of obj['@graph']) {
@@ -220,7 +226,7 @@ async function fetchOgImage(url, browser) {
                                 return null;
                             };
                             const found = findImage(data);
-                            if (found && !found.startsWith('data:')) {
+                            if (found) {
                                 imgUrl = found;
                                 break;
                             }
