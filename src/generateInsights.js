@@ -3,56 +3,7 @@ const path = require('path');
 const puppeteer = require('puppeteer');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const config = require('./config');
-
-/**
- * Google NewsのリンクからオリジナルのURLを抽出する
- */
-function decodeGoogleNewsUrl(encodedUrl) {
-    if (!encodedUrl.includes('news.google.com')) return encodedUrl;
-    try {
-        const urlObj = new URL(encodedUrl);
-        const pathParts = urlObj.pathname.split('/');
-        const base64Str = pathParts.find(p => p.startsWith('CBM')) || pathParts[pathParts.length - 1];
-        const actualBase64 = base64Str.startsWith('CBM') ? base64Str.substring(3) : base64Str;
-        const buffer = Buffer.from(actualBase64, 'base64');
-        const raw = buffer.toString('latin1');
-        const start = raw.indexOf('http');
-        if (start === -1) return encodedUrl;
-        let url = '';
-        for (let i = start; i < raw.length; i++) {
-            const code = raw.charCodeAt(i);
-            if (code < 32 || code > 126 || [34, 39, 60, 62].includes(code)) break;
-            url += raw[i];
-        }
-        return url;
-    } catch (e) {
-        return encodedUrl;
-    }
-}
-
-/**
- * オンラインでリダイレクトを追跡してURLを解決する
- */
-async function resolveUrlOnline(googleUrl) {
-    try {
-        const userAgent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1';
-        const response = await fetch(googleUrl, {
-            method: 'GET',
-            headers: { 'User-Agent': userAgent }
-        });
-        const text = await response.text();
-        const nauMatch = text.match(/data-n-au="([^"]+)"/);
-        if (nauMatch) return nauMatch[1];
-        const pMatch = text.match(/data-p="([^"]+)"/);
-        if (pMatch && pMatch[1].startsWith('http')) return pMatch[1];
-        const refreshMatch = text.match(/url=(http[^"]+)"/i);
-        if (refreshMatch) return refreshMatch[1];
-        if (response.url && !response.url.includes('google.com')) return response.url;
-        return googleUrl;
-    } catch (e) {
-        return googleUrl;
-    }
-}
+const { decodeGoogleNewsUrl, resolveUrlOnline } = require('./urlUtils');
 
 /**
  * Puppeteerを使用してリダイレクトを完全に追跡し、ページ内の主要な画像も探す

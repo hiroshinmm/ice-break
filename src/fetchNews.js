@@ -2,6 +2,7 @@ const Parser = require('rss-parser');
 const fs = require('fs');
 const path = require('path');
 const config = require('./config');
+const { decodeGoogleNewsUrl, resolveUrlOnline } = require('./urlUtils');
 
 const parser = new Parser({
     headers: {
@@ -24,98 +25,6 @@ const isRecent = (dateStr, days) => {
     cutoff.setDate(cutoff.getDate() - days);
     return pubDate >= cutoff;
 };
-
-/**
- * Google NewsのリンクからオリジナルのURLを抽出する
- * 従来のBase64に加え、バイナリデータ内を検索する堅牢な方式を採用
- */
-function decodeGoogleNewsUrl(encodedUrl) {
-    if (!encodedUrl.includes('news.google.com')) return encodedUrl;
-    try {
-        const urlObj = new URL(encodedUrl);
-        const pathParts = urlObj.pathname.split('/');
-        // 最初の長い文字列（CBM...）を探す
-        const base64Str = pathParts.find(p => p.startsWith('CBM')) || pathParts[pathParts.length - 1];
-        
-        // Base64デコード。CBMプレフィックスがある場合は除外
-        const actualBase64 = base64Str.startsWith('CBM') ? base64Str.substring(3) : base64Str;
-        const buffer = Buffer.from(actualBase64, 'base64');
-        
-        // バイナリデータ内をlatin1として読み込み、'http'を探す（Protobuf等への対応）
-        const raw = buffer.toString('latin1');
-        const start = raw.indexOf('http');
-        if (start === -1) return encodedUrl;
-
-        let url = '';
-        for (let i = start; i < raw.length; i++) {
-            const code = raw.charCodeAt(i);
-            // URLとして不適切な文字、または非表示文字で停止
-            if (code < 32 || code > 126 || [34, 39, 60, 62].includes(code)) break;
-            url += raw[i];
-        }
-        return url;
-    } catch (e) {
-        return encodedUrl;
-    }
-}
-
-/**
- * オンラインでリダイレクトを追跡してURLを解決する
- */
-async function resolveUrlOnline(googleUrl) {
-    try {
-        const userAgent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1';
-        const response = await fetch(googleUrl, {
-            method: 'GET',
-            headers: { 'User-Agent': userAgent }
-        });
-        const text = await response.text();
-
-        // data-n-au (New Google News format)
-        const nauMatch = text.match(/data-n-au="([^"]+)"/);
-        if (nauMatch) return nauMatch[1];
-
-        // data-p
-        const pMatch = text.match(/data-p="([^"]+)"/);
-        if (pMatch && pMatch[1].startsWith('http')) return pMatch[1];
-
-        // Meta refresh
-        const refreshMatch = text.match(/url=(http[^"]+)"/i);
-        if (refreshMatch) return refreshMatch[1];
-        
-        // Fallback to response.url if it looks like a real article
-        if (response.url && !response.url.includes('google.com')) return response.url;
-
-        return googleUrl;
-    } catch (e) {
-        return googleUrl;
-    }
-}
-
-/**
- * 記事のHTMLからOG画像を抽出する
- */
-async function fetchOgImage(url) {
-    if (!url || url.includes('google.com')) return null;
-    try {
-        const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
-        const response = await fetch(url, {
-            headers: { 'User-Agent': userAgent }
-        });
-        const text = await response.text();
-        const ogImageMatch = text.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i) ||
-                             text.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/i);
-        if (ogImageMatch) return ogImageMatch[1];
-
-        const twitterImageMatch = text.match(/<meta[^>]*name=["']twitter:image["'][^>]*content=["']([^"']+)["']/i) ||
-                                  text.match(/<meta[^>]*content=["']([^"']+)["'][^>]*name=["']twitter:image["']/i);
-        if (twitterImageMatch) return twitterImageMatch[1];
-
-        return null;
-    } catch (e) {
-        return null;
-    }
-}
 
 async function fetchCategoryNews(urls, days) {
     let allItems = [];

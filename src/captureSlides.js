@@ -78,37 +78,46 @@ async function main() {
         args: ['--no-sandbox', '--disable-setuid-sandbox', '--allow-file-access-from-files']
     });
 
-    const page = await browser.newPage();
-    // Set a realistic User-Agent to avoid bot detection when loading news images
-    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
-
+    // スライドごとにページを生成・破棄する（1失敗で全体が止まるのを防ぐ）
     for (const item of filesToCapture) {
-        console.log(`Capturing: ${item.category}`);
-        // Reset timeout to 30s as we use existing images
-        await page.goto(`file://${item.htmlFile}`, { waitUntil: 'networkidle2', timeout: 30000 });
+        let page = null;
+        try {
+            page = await browser.newPage();
+            // ニュースサイトの画像ブロック対策: リアルなUser-Agentを設定
+            await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+            console.log(`Capturing: ${item.category}`);
+            await page.goto(`file://${item.htmlFile}`, { waitUntil: 'networkidle2', timeout: 30000 });
 
-        // Ensure images are fully loaded before screenshot
-        await page.evaluate(async () => {
-            const images = Array.from(document.querySelectorAll('img'));
-            await Promise.all(images.map(img => {
-                if (img.complete) return;
-                return new Promise((resolve) => {
-                    img.onload = resolve;
-                    img.onerror = resolve; // resolve anyway
-                    setTimeout(resolve, 10000); // Increased from 5s to 10s for better reliability with slow servers
-                });
-            }));
-        });
+            // 画像の読み込みを待機してからスクリーンショット
+            await page.evaluate(async () => {
+                const images = Array.from(document.querySelectorAll('img'));
+                await Promise.all(images.map(img => {
+                    if (img.complete) return;
+                    return new Promise((resolve) => {
+                        img.onload = resolve;
+                        img.onerror = resolve; // エラーでもブロックしない
+                        setTimeout(resolve, 10000);
+                    });
+                }));
+            });
 
-        // 1. Web PNG (High Res)
-        await page.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 2 });
-        await page.screenshot({ path: item.pngFile, type: 'png' });
+            // 1. Web PNG (High Res)
+            await page.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 2 });
+            await page.screenshot({ path: item.pngFile, type: 'png' });
 
-        // 2. Email JPG (Standard Res)
-        await page.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 1 });
-        await page.screenshot({ path: item.jpgFile, type: 'jpeg', quality: 60 });
+            // 2. Email JPG (Standard Res)
+            await page.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 1 });
+            await page.screenshot({ path: item.jpgFile, type: 'jpeg', quality: 60 });
 
-        console.log(`Saved: ${item.category} (PNG & JPG)`);
+            console.log(`Saved: ${item.category} (PNG & JPG)`);
+        } catch (err) {
+            // 1件失敗しても次のスライドへ継続する
+            console.error(`[ERROR] Failed to capture slide for "${item.category}": ${err.message}`);
+        } finally {
+            if (page) {
+                try { await page.close(); } catch (_) {}
+            }
+        }
     }
 
     await browser.close();
