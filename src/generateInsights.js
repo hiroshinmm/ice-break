@@ -7,6 +7,7 @@ const { decodeGoogleNewsUrl, resolveUrlOnline } = require('./urlUtils');
 
 /**
  * Puppeteerを使用してリダイレクトを完全に追跡し、ページ内の主要な画像も探す
+ * CBMi 新フォーマット対応: /rss/articles/ → /articles/ に変換してからアクセス
  */
 async function resolveUrlWithPuppeteer(googleUrl, browser) {
     let page = null;
@@ -14,13 +15,19 @@ async function resolveUrlWithPuppeteer(googleUrl, browser) {
         page = await browser.newPage();
         await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
         
-        await page.goto(googleUrl, { waitUntil: 'networkidle2', timeout: 30000 });
+        // CBMi 新フォーマット: /articles/ エンドポイントを使ってJSリダイレクトを有効化
+        const targetUrl = googleUrl.includes('/rss/articles/')
+            ? googleUrl.replace('/rss/articles/', '/articles/').replace(/\?.*$/, '')
+            : googleUrl;
+        
+        await page.goto(targetUrl, { waitUntil: 'networkidle2', timeout: 30000 });
         
         try {
             await page.waitForFunction(() => !window.location.href.includes('google.com'), { timeout: 15000 });
         } catch (e) {
             console.log(`[LOG] Puppeteer redirect wait timed out or still on google. Current URL: ${page.url()}`);
         }
+
 
         // メタデータ、または本文内の「もっともらしい」画像を抽出する
         const detectedImageUrl = await page.evaluate(() => {

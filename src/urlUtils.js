@@ -32,26 +32,46 @@ function decodeGoogleNewsUrl(encodedUrl) {
 
 /**
  * オンラインで Google News リダイレクトを追跡して元の URL を解決する
- * ※ タイムアウト 8 秒でハング防止
+ * CBMi (新フォーマット): /rss/articles/ → /articles/ にアクセスしてリダイレクト追跡
+ * CBM  (旧フォーマット): fetch後のHTMLから data-n-au 等を抽出
+ * ※ タイムアウト 10 秒でハング防止
  */
 async function resolveUrlOnline(googleUrl) {
+    const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
     try {
-        const userAgent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1';
+        // CBMi 新フォーマット: /articles/ エンドポイントへのリダイレクト追跡
+        // fetch の redirect: 'follow' で最終URLを取得する
+        if (googleUrl.includes('/rss/articles/')) {
+            const articlesUrl = googleUrl
+                .replace('/rss/articles/', '/articles/')
+                .replace(/\?.*$/, '');
+            try {
+                const res = await fetch(articlesUrl, {
+                    method: 'GET',
+                    headers: { 'User-Agent': userAgent },
+                    redirect: 'follow',
+                    signal: AbortSignal.timeout(10000)
+                });
+                if (res.url && !res.url.includes('google.com')) {
+                    return res.url;
+                }
+            } catch (_) { /* fallthrough to legacy method */ }
+        }
+
+        // 旧フォーマット (CBM) および /articles/ では解決できなかった場合の従来方式
         const response = await fetch(googleUrl, {
             method: 'GET',
             headers: { 'User-Agent': userAgent },
-            signal: AbortSignal.timeout(8000) // タイムアウト追加
+            signal: AbortSignal.timeout(10000)
         });
         const text = await response.text();
 
-        // New Google News format
         const nauMatch = text.match(/data-n-au="([^"]+)"/);
         if (nauMatch) return nauMatch[1];
 
         const pMatch = text.match(/data-p="([^"]+)"/);
         if (pMatch && pMatch[1].startsWith('http')) return pMatch[1];
 
-        // Meta refresh
         const refreshMatch = text.match(/url=(http[^"]+)"/i);
         if (refreshMatch) return refreshMatch[1];
 
