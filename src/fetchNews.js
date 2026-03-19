@@ -27,25 +27,23 @@ const isRecent = (dateStr, days) => {
 };
 
 async function fetchCategoryNews(urls, days) {
-    let allItems = [];
-    for (const url of urls) {
+    const feedPromises = urls.map(async (url) => {
         try {
             const feed = await parser.parseURL(url);
             const recentItems = feed.items.filter(item => isRecent(item.isoDate || item.pubDate, days));
             
-            for (const item of recentItems) {
+            return recentItems.map(item => {
                 let link = item.link;
                 if (link.includes('news.google.com')) {
-                    // 高速な解決ロジックのみをループ内で実行
+                    // ループ内での resolveUrlOnline (オンライン解決) はレート制限回避のため停止。
+                    // 最終的に選ばれた1件のみを generateInsights.js で解決するように変更。
                     const decoded = decodeGoogleNewsUrl(link);
                     if (decoded && !decoded.includes('news.google.com')) {
                         link = decoded;
-                    } else {
-                        link = await resolveUrlOnline(link);
                     }
                 }
 
-                // ループ内ではRSSからの画像抽出のみを行い、スクレイピング（fetchOgImage）は後回しにする
+                // RSSからの画像抽出のみを行い、スクレイピング（fetchOgImage）は後回しにする
                 let imageUrl = null;
                 if (item.enclosure && item.enclosure.url) {
                     imageUrl = item.enclosure.url;
@@ -57,40 +55,41 @@ async function fetchCategoryNews(urls, days) {
                     imageUrl = typeof item.image === 'string' ? item.image : (item.image.url || null);
                 }
 
-                // Description/Content 内の <img> タグから抽出を試みるフォールバック
                 if (!imageUrl) {
                     const desc = item.content || item.description || item.contentSnippet || '';
                     const imgMatch = desc.match(/<img[^>]+src=["']([^"']+)["']/i);
                     if (imgMatch) {
                         imageUrl = imgMatch[1];
-                        // Google Newsのピクセル追跡用などの小さい画像を除外
                         if (imageUrl.includes('resizing.marketwatch.com') || imageUrl.includes('pixel.ads') || (imageUrl.startsWith('http') && imageUrl.length < 20)) {
                             imageUrl = null;
                         }
                     }
                 }
 
-                allItems.push({
+                return {
                     title: item.title,
                     link: link,
                     pubDate: item.isoDate || item.pubDate,
                     source: feed.title || new URL(url).hostname,
                     imageUrl: imageUrl,
                     snippet: item.contentSnippet || item.content || ''
-                });
-            }
+                };
+            });
         } catch (error) {
             console.error(`Error fetching ${url}:`, error.message);
+            return [];
         }
-    }
-    return allItems;
+    });
+
+    const results = await Promise.all(feedPromises);
+    return results.flat();
 }
 
 async function main() {
-    console.log('Fetching news...');
+    console.log('Fetching news (parallely)...');
     const results = {};
 
-    for (const [category, urls] of Object.entries(config.feeds)) {
+    const categoryPromises = Object.entries(config.feeds).map(async ([category, urls]) => {
         console.log(`Processing category: ${category}`);
         const items = await fetchCategoryNews(urls, config.DAYS_TO_FETCH);
 
@@ -111,8 +110,10 @@ async function main() {
 
         // Keep top 20 items per category
         results[category] = uniqueItems.slice(0, 20);
-        console.log(`Found ${uniqueItems.length} recent news items for ${category}. Saving top ${results[category].length}.`);
-    }
+        console.log(`Finished category: ${category}. Found ${uniqueItems.length} items.`);
+    });
+
+    await Promise.all(categoryPromises);
 
     const outDir = path.join(__dirname, '..', 'data');
     if (!fs.existsSync(outDir)) {

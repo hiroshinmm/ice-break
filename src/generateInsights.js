@@ -265,21 +265,27 @@ async function main() {
     });
 
     try {
-        for (const [category, items] of Object.entries(newsData)) {
-            if (category !== 'AI') continue; // 一時的に AI カテゴリのみに絞る
-            console.log(`\nGenerating insight for category: ${category}`);
+        const categoryEntries = Object.entries(newsData);
+        // Gemini API のレート制限 (RPM/TPM) とメモリ使用量を考慮し、2件ずつ並列処理
+        const CONCURRENCY = 2;
+        
+        for (let i = 0; i < categoryEntries.length; i += CONCURRENCY) {
+            const chunk = categoryEntries.slice(i, i + CONCURRENCY);
+            
+            await Promise.all(chunk.map(async ([category, items]) => {
+                // 不要なログを避けるため、アイテムがない場合はスキップ
+                if (!items || items.length === 0) {
+                    insights[category] = null;
+                    return;
+                }
 
-            if (!items || items.length === 0) {
-                console.log(`No news found for ${category}. Skipping.`);
-                insights[category] = null;
-                continue;
-            }
+                console.log(`\nGenerating insight for category: ${category} (Items: ${items.length})`);
 
-            const newsText = items.slice(0, 10).map((item, index) =>
-                `[${index + 1}] Title: ${item.title}\nSource: ${item.source}\nLink: ${item.link}\nSnippet: ${item.snippet}\n`
-            ).join('\n');
+                const newsText = items.slice(0, 10).map((item, index) =>
+                    `[${index + 1}] Title: ${item.title}\nSource: ${item.source}\nLink: ${item.link}\nSnippet: ${item.snippet}\n`
+                ).join('\n');
 
-            const prompt = `
+                const prompt = `
 You are an expert AI assistant for Sony's display development software engineers.
 Your task is to review the following recent news articles in the category "${category}" and pick ONE most interesting/important topic to present as an icebreak at a morning meeting.
 If the news is not directly relevant to displays, cameras, XR, or technology, try to find the tech angle.
@@ -297,75 +303,62 @@ Here are the recent news articles:
 ${newsText}
 `;
 
-            try {
-                const result = await model.generateContent(prompt);
-                const response = result.response;
-                const jsonText = response.text();
-                const parsed = JSON.parse(jsonText);
+                try {
+                    const result = await model.generateContent(prompt);
+                    const response = result.response;
+                    const parsed = JSON.parse(response.text());
 
-                // 最後に選ばれた1件のみ、リンクの解決と画像の再取得を行う
-                let pickedItem = items.find(item => item.link === parsed.sourceUrl);
-                if (!pickedItem) {
-                    pickedItem = items[0];
-                }
+                    let pickedItem = items.find(item => item.link === parsed.sourceUrl) || items[0];
+                    const rssImageUrl = pickedItem.imageUrl;
 
-                // RSS等から既に画像URLを持っている場合はそれを保持しておく
-                const rssImageUrl = pickedItem.imageUrl;
-
-                // Google Newsリンクなら解決を試みる
-                if (pickedItem.link.includes('news.google.com')) {
-                    console.log(`Resolving picked article link: ${pickedItem.link.substring(0, 50)}...`);
-                    let resolved = decodeGoogleNewsUrl(pickedItem.link);
-                    if (resolved.includes('news.google.com')) {
-                        resolved = await resolveUrlOnline(pickedItem.link);
-                    }
-                    if (resolved.includes('news.google.com')) {
-                        const result = await resolveUrlWithPuppeteer(pickedItem.link, browser);
-                        resolved = result.finalUrl;
-                        if (result.detectedImageUrl) {
-                            pickedItem.imageUrl = result.detectedImageUrl;
+                    // 選ばれた記事のURL解決
+                    if (pickedItem.link.includes('news.google.com')) {
+                        console.log(`[${category}] Resolving: ${pickedItem.link.substring(0, 50)}...`);
+                        let resolved = decodeGoogleNewsUrl(pickedItem.link);
+                        
+                        // オフラインで解決できなかった場合のみオンライン解決を試みる
+                        if (resolved.includes('news.google.com')) {
+                            resolved = await resolveUrlOnline(pickedItem.link);
+                        }
+                        
+                        // それでも解決できない、または Sorry ページなら Puppeteer で最終手段
+                        if (resolved.includes('google.com')) {
+                            const result = await resolveUrlWithPuppeteer(pickedItem.link, browser);
+                            resolved = result.finalUrl;
+                            if (result.detectedImageUrl) pickedItem.imageUrl = result.detectedImageUrl;
+                        }
+                        
+                        if (resolved && !resolved.includes('google.com')) {
+                            pickedItem.link = resolved;
+                            parsed.sourceUrl = resolved;
                         }
                     }
-                    
-                    // sorry ページが返された場合は元のリンクを維持
-                    if (resolved && !resolved.includes('google.com/sorry') && !resolved.includes('consent.google.com')) {
-                        pickedItem.link = resolved;
-                        parsed.sourceUrl = resolved;
+
+                    // 高品質な画像の確保
+                    if (!pickedItem.imageUrl && !pickedItem.link.includes('google.com')) {
+                        const ogImage = await fetchOgImage(pickedItem.link, browser);
+                        if (ogImage) pickedItem.imageUrl = ogImage;
                     }
-                }
 
-                // 選ばれた1件について、解決済みURLから再度高品質な画像を求めて再取得を試みる
-                // ただし、既に強力な Puppeteer 側で取得できている場合はスキップ
-                if (!pickedItem.imageUrl && !pickedItem.link.includes('google.com')) {
-                    console.log(`Ensuring high quality OGP image for resolved article: ${pickedItem.link.substring(0, 50)}...`);
-                    const ogImage = await fetchOgImage(pickedItem.link, browser);
-                    if (ogImage) {
-                        pickedItem.imageUrl = ogImage;
+                    if (!pickedItem.imageUrl && rssImageUrl) {
+                        pickedItem.imageUrl = rssImageUrl;
                     }
-                }
 
-                // 全ての試行の末、画像が null なら RSS 由来の画像に戻す
-                if (!pickedItem.imageUrl && rssImageUrl) {
-                    pickedItem.imageUrl = rssImageUrl;
-                }
-
-                if (pickedItem.imageUrl) {
-                    console.log(`Setting final image URL: ${pickedItem.imageUrl.substring(0, 60)}`);
-                    parsed.originalImageUrl = pickedItem.imageUrl;
+                    parsed.originalImageUrl = pickedItem.imageUrl || null;
                     parsed.originalImageArticleUrl = pickedItem.link;
-                } else {
-                    console.log(`No image found for ${category}. Will use default icon.`);
-                    parsed.originalImageUrl = null;
+
+                    insights[category] = parsed;
+                    console.log(`[${category}] Success: ${parsed.title}`);
+                } catch (error) {
+                    console.error(`Error generating insight for ${category}:`, error.message);
+                    insights[category] = null;
                 }
+            }));
 
-                insights[category] = parsed;
-                console.log(`Success: ${parsed.title}`);
-            } catch (error) {
-                console.error(`Error generating insight for ${category}:`, error.message);
-                insights[category] = null;
+            // チャンク間にわずかな待機を入れ、API レート制限をより安全にする
+            if (i + CONCURRENCY < categoryEntries.length) {
+                await new Promise(r => setTimeout(r, 1000));
             }
-
-            await new Promise(resolve => setTimeout(resolve, 2000));
         }
     } finally {
         await browser.close();
