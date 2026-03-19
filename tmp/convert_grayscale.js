@@ -14,9 +14,14 @@ async function main() {
     const page = await browser.newPage();
     
     // 画像を読み込み、CSSでグレースケールを適用
-    const html = `<html><body style="margin:0;padding:0;"><img src="file://${inputPath}" style="filter: grayscale(100%);"></body></html>`;
-    await page.setContent(html);
+    await page.goto(`file://${inputPath}`, { waitUntil: 'load' });
     
+    // CSSを追加
+    await page.addStyleTag({ content: 'body { margin: 0; padding: 0; } img { filter: grayscale(100%); display: block; }' });
+    
+    // 確実に読み込まれるまで少し待つ
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     const imgElement = await page.$('img');
     const rect = await imgElement.boundingBox();
     
