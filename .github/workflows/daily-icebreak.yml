@@ -43,9 +43,8 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           
-      # Step 3: Generate HTML Slides & Capture Images with Puppeteer
-      # NOTE: Puppeteer requires some system dependencies in CI (Ubuntu includes them usually, but just in case)
-      - name: Generate & Capture Slides
+      # Step 3: Download Images & Generate Web Gallery
+      - name: Process Images and Gallery
         run: node src/captureSlides.js
 
       # Step 4: Setup, Build and Deploy to GitHub Pages

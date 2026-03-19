@@ -20,20 +20,20 @@ async function main() {
     insightsData = JSON.parse(fs.readFileSync(insightsFile, 'utf-8'));
   }
 
-  // Prepare attachments (Attach only JPG for smaller email size)
+  // 添付ファイルの準備 (記事のオリジナル画像をインライン表示用に添付)
   const attachments = [];
   if (fs.existsSync(imagesDir)) {
-    const imageFiles = fs.readdirSync(imagesDir).filter(file => /\.jpg$/i.test(file));
+    const imageFiles = fs.readdirSync(imagesDir).filter(file => /_image\.jpg$/i.test(file));
     for (const file of imageFiles) {
       attachments.push({
         filename: file,
         path: path.join(imagesDir, file),
-        cid: path.parse(file).name // Use filename (safeName) as Content-ID
+        cid: path.parse(file).name // safeName_image
       });
     }
   }
 
-  // Build Email Content
+  // メール本文の構築
   const today = new Date().toLocaleDateString('ja-JP', {
     timeZone: 'Asia/Tokyo',
     month: 'short',
@@ -41,18 +41,18 @@ async function main() {
   });
   let htmlContent = `
     <div style="font-family: Arial, sans-serif; color: #333; max-width: 800px; margin: 0 auto; padding: 10px;">
-      <h2 style="color: #1A2980; border-bottom: 2px solid #26D0CE; padding-bottom: 10px; font-size: 20px;">
+      <h2 style="color: #1e293b; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; font-size: 20px;">
         🚀 Daily Tech Briefing - ${today}
       </h2>
-      <p style="font-size: 14px; line-height: 1.6;">おはようございます。本日の最新技術トレンドスライドが生成されました。以下のサマリーと画像をご確認ください。</p>
+      <p style="font-size: 14px; line-height: 1.6;">おはようございます。本日の最新技術ニュースをお届けします。以下の要約とインサイトをご確認ください。</p>
       
       <div style="margin: 30px 0; text-align: center;">
-        <a href="${GITHUB_PAGES_URL || '#'}" style="background-color: #4A90E2; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">
-          Webでスライドを開く
+        <a href="${GITHUB_PAGES_URL || '#'}" style="background-color: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+          Webギャラリーで詳しく見る
         </a>
       </div>
       
-      <h3 style="margin-top: 30px; font-size: 18px;">📌 ピックアップトピック概要</h3>
+      <h3 style="margin-top: 30px; font-size: 18px; color: #1e293b;">📌 本日のピックアップ</h3>
       <div>
   `;
 
@@ -60,34 +60,39 @@ async function main() {
     if (!insight) continue;
 
     const safeName = category.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-    const cid = safeName;
-    // For Web, we link to the high-res PNG
-    const imgWebUrl = GITHUB_PAGES_URL ? `${GITHUB_PAGES_URL}images/${safeName}.png` : '#';
+    const cid = `${safeName}_image`;
+    
+    // Web上での画像URL (GitHub Pages)
+    const imgWebUrl = GITHUB_PAGES_URL ? `${GITHUB_PAGES_URL}images/${safeName}_image.jpg` : '#';
 
     htmlContent += `
-      <div style="border: 1px solid #eee; border-radius: 8px; padding: 15px; background: #fafafa; margin-bottom: 30px; display: block; overflow: hidden;">
-        <div style="margin-bottom: 8px;">
-          <strong style="color: #4A90E2; font-size: 14px;">${category}</strong>
+      <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; background: #ffffff; margin-bottom: 30px; display: block; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+        <div style="margin-bottom: 10px;">
+          <strong style="color: #3b82f6; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">${category}</strong>
         </div>
-        <div style="margin-bottom: 8px;">
-          <strong style="font-size: 16px;">
-            <a href="${insight.sourceUrl}" target="_blank" style="color: #333; text-decoration: none;">${insight.title}</a>
+        <div style="margin-bottom: 15px;">
+          <strong style="font-size: 18px;">
+            <a href="${insight.sourceUrl}" target="_blank" style="color: #1e293b; text-decoration: none;">${insight.title}</a>
           </strong>
         </div>
-        <div style="font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 10px;">
-          ${insight.summary}
-        </div>
-        <div style="font-size: 13px; color: #333; line-height: 1.6; background-color: #eef7ff; padding: 12px; border-radius: 6px; margin-bottom: 15px; border-left: 3px solid #4A90E2;">
-          <strong>💡 INSIGHT:</strong><br>
-          ${insight.insight}
-        </div>
-        <div style="margin-bottom: 15px; text-align: center;">
-          <a href="${imgWebUrl}" target="_blank" style="display: inline-block;">
-            <img src="cid:${cid}" alt="${insight.title}" style="width: 100%; max-width: 600px; height: auto; border-radius: 4px; border: 1px solid #ddd; display: block; margin: 0 auto;" />
+        
+        <div style="margin-bottom: 20px; text-align: center;">
+          <a href="${insight.sourceUrl}" target="_blank" style="display: inline-block; width: 100%;">
+            <img src="cid:${cid}" alt="${insight.title}" style="width: 100%; max-width: 600px; height: auto; border-radius: 8px; border: 1px solid #f1f5f9; display: block; margin: 0 auto;" />
           </a>
         </div>
-        <div>
-          <a href="${insight.sourceUrl}" style="font-size: 12px; color: #999; text-decoration: none; display: inline-block;">[Source: ${insight.sourceName}]</a>
+
+        <div style="font-size: 14px; color: #334155; line-height: 1.6; margin-bottom: 15px;">
+          ${insight.summary}
+        </div>
+        
+        <div style="font-size: 13px; color: #475569; line-height: 1.6; background-color: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #3b82f6; font-style: italic;">
+          <strong>💡 Technical Insight:</strong><br>
+          ${insight.insight}
+        </div>
+
+        <div style="text-align: right;">
+          <a href="${insight.sourceUrl}" style="font-size: 12px; color: #64748b; text-decoration: none;">Source: ${insight.sourceName}</a>
         </div>
       </div>
     `;
@@ -96,7 +101,7 @@ async function main() {
   htmlContent += `
       </div>
       
-      <div style="margin-top: 40px; font-size: 12px; color: #999; text-align: center;">
+      <div style="margin-top: 40px; font-size: 12px; color: #94a3b8; text-align: center;">
         <p>このメールは Automated Daily Icebreaks システムによって自動送信されています。</p>
       </div>
     </div>
@@ -107,14 +112,14 @@ async function main() {
     service: 'gmail',
     auth: {
       user: GMAIL_USER,
-      pass: GMAIL_PASS // Use App Password if 2FA is enabled
+      pass: GMAIL_PASS // 2FA有効時はアプリパスワードを使用
     }
   });
 
   const mailOptions = {
-    from: `"Tech Briefing Bot" <${GMAIL_USER}>`,
+    from: `"Ice Break Bot" <${GMAIL_USER}>`,
     to: GMAIL_TO,
-    subject: `Daily Tech Briefing スライド更新通知 (${today})`,
+    subject: `Daily Tech Briefing 更新通知 (${today})`,
     html: htmlContent,
     attachments: attachments
   };

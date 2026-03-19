@@ -4,12 +4,12 @@
 本システムは、ニュースの収集、AIによる分析、視覚化、および通知を自動化するサーバーレスアーキテクチャを採用しています。実行環境として **GitHub Actions** を利用し、静的コンテンツを **GitHub Pages** で公開します。
 
 ### 処理フロー
-1.  **収集 (Fetch)**: RSSフィードおよびGoogle Newsからカテゴリ別のニュースを取得。
-2.  **分析 (Insight)**: Gemini APIを用いて重要ニュースを抽出し、要約と技術インサイトを生成。
-3.  **画像抽出 (Images)**: 記事のOGP画像を取得。Puppeteerで動的な解決も実施。
-4.  **描画 (Capture)**: EJSテンプレートをスライド画像（PNG/JPG）としてレンダリング。
-5.  **公開 (Deploy)**: 生成物を `dist` フォルダに集約し、GitHub Pagesにデプロイ。
-6.  **通知 (Notify)**: 更新内容をメール（Nodemailer）で送信。
+6.  **収集 (Fetch)**: RSSフィードおよびGoogle Newsからカテゴリ別のニュースを取得。
+7.  **分析 (Insight)**: Gemini APIを用いて重要ニュースを抽出し、要約と技術インサイトを生成。
+8.  **画像抽出 (Images)**: 記事のOGP画像を取得。Puppeteerで動的な解決も実施。
+9.  **構成 (Assemble)**: EJSテンプレートを用いてWebギャラリー（index.html）を生成。画像はWebから取得したものを直接参照または軽量化して利用。
+10. **公開 (Deploy)**: 生成物を `dist` フォルダに集約し、GitHub Pagesにデプロイ。
+11. **通知 (Notify)**: 更新内容をメール（Nodemailer）で送信。
 
 ---
 
@@ -30,16 +30,16 @@
     - 取得失敗時は Puppeteer でページをレンダリングし、ヒューリスティックな画像抽出を実施。
 - **出力**: `data/insights.json`
 
-### 2.3 スライド生成 (`src/captureSlides.js`)
-- **レンダリング**: EJSテンプレート (`src/templates/slide.ejs`) を使用。
-- **キャプチャ**: Puppeteer を使用。
-    - **PNG**: 1920x1080 (deviceScaleFactor: 2) - 高解像度 Web/アーカイブ用。
-    - **JPG**: 1920x1080 (quality: 60) - 軽量メール添付用。
-- **ギャラリー生成**: `src/templates/index.ejs` から `dist/index.html` を生成。
+### 2.3 ギャラリー生成 (`src/captureSlides.js` -> 役割変更)
+- **レンダリング**: EJSテンプレート (`src/templates/index.ejs`) を使用。
+- **画像管理**: 
+    - スライド画像（PNG/JPG）のレンダリングおよびキャプチャ機能を廃止。
+    - 各記事のオリジナル画像URLを直接使用、または軽量化したキャッシュ画像を表示。
+- **出力**: `dist/index.html` (Webギャラリー)
 
 ### 2.4 通知機能 (`src/sendNotification.js`)
 - **方式**: Nodemailer による Gmail SMTP 送信。
-- **内容**: カテゴリごとの技術インサイト本文と、軽量化されたJPGスライド画像の添付。
+- **内容**: カテゴリごとの技術インサイト本文と、HTMLメール内でのオリジナル画像表示（スライド画像の添付は廃止）。
 
 ---
 
