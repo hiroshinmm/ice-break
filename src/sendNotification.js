@@ -71,6 +71,9 @@ async function main() {
   for (const [category, insight] of Object.entries(insightsData)) {
     if (!insight) continue;
 
+    const safeName = category.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const cid = `${safeName}_image`;
+    
     // この記事の画像が添付ファイルにあるか確認
     const hasImage = attachments.some(a => a.cid === cid);
     const displayCid = hasImage ? cid : 'default_icon';
