@@ -1,5 +1,6 @@
 node_modules/
 .env
 dist/
-data/news.json
-data/insights.json
+data/
+tmp_img/
+*.log
