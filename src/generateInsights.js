@@ -134,6 +134,10 @@ async function fetchOgImage(url, browser) {
                 'User-Agent': userAgent,
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
                 'Accept-Language': 'ja,en-US;q=0.9,en;q=0.8',
+                'Cache-Control': 'no-cache',
+                'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+                'sec-ch-ua-mobile': '?0',
+                'sec-ch-ua-platform': '"Windows"',
                 'Referer': url // Set Referer to article's own URL to bypass some blocks
             },
             signal: AbortSignal.timeout(10000) // 10s timeout
@@ -286,15 +290,15 @@ async function main() {
                 ).join('\n');
 
                 const prompt = `
-You are an expert AI assistant for Sony's display development software engineers.
+You are an expert AI assistant for software engineers.
 Your task is to review the following recent news articles in the category "${category}" and pick ONE most interesting/important topic to present as an icebreak at a morning meeting.
-If the news is not directly relevant to displays, cameras, XR, or technology, try to find the tech angle.
+If the news is not directly relevant to software technology, try to find the tech angle.
 
 Output a valid JSON object with the following structure:
 {
   "title": "A catchy, short title for the slide (Japanese, max 40 chars)",
   "summary": "A summary of the news (Japanese, around 200 characters, capturing the main points clearly)",
-  "insight": "A deep insight 'INSIGHT' tailored for display software engineers. Why does this matter? What is the technical implication? (Japanese, 3-4 sentences)",
+  "insight": "A deep insight 'INSIGHT' tailored for software engineers. Why does this matter? What is the technical implication? (Japanese, 2-3 sentences, approx. 150 chars)",
   "sourceUrl": "The exact URL of the picked article from the provided list",
   "sourceName": "The name of the source (e.g. 4Gamer, The Verge)"
 }
