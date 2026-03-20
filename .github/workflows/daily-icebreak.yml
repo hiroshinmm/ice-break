@@ -1,6 +1,8 @@
 name: Daily Icebreak Generator
 
 on:
+  push:
+    branches: [ main ]
   schedule:
     # 毎日 日本時間(JST) 朝8:00 に実行 (UTCでは 23:00)
     - cron: '0 23 * * *'
