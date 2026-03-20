@@ -18,7 +18,7 @@ jobs:
     # Allow pushing to the repository for Pages
     # Required permissions for GitHub Pages
     permissions:
-      contents: read
+      contents: write
       pages: write
       id-token: write
       
