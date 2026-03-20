@@ -86,7 +86,13 @@ async function main() {
 
     const browser = await puppeteer.launch({
         headless: "new",
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--allow-file-access-from-files']
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--allow-file-access-from-files',
+            '--disable-dev-shm-usage', // GitHub Actions メモリ不足対策
+            '--disable-gpu'
+        ]
     });
 
     console.log('Optimizing images and generating gallery...');
@@ -130,13 +136,16 @@ async function main() {
         });
     }
 
-    await browser.close();
+    // await browser.close(); // 後回しにする
 
+    console.log('Reading index template...');
     const indexTemplateString = fs.readFileSync(indexTemplateFile, 'utf-8');
     try {
+        console.log('Rendering EJS...');
         const indexContent = ejs.render(indexTemplateString, { slides: galleryItems });
         console.log('EJS Render Success');
         const outputPath = path.join(distDir, 'index.html');
+        console.log(`Writing index.html to ${outputPath}...`);
         fs.writeFileSync(outputPath, indexContent, 'utf-8');
         console.log('index.html Written Success');
     } catch (renderError) {
@@ -144,24 +153,29 @@ async function main() {
         throw renderError;
     }
 
-    // tmpDirのクリーンアップ（Windowsのファイルロック対策にリトライ追加）
-    console.log('Cleaning up temp directory...');
-    for (let i = 0; i < 3; i++) {
-        try {
-            if (fs.existsSync(tempDir)) {
-                fs.rmSync(tempDir, { recursive: true, force: true });
-            }
-            break;
-        } catch (_) {
-            await new Promise(r => setTimeout(r, 1000));
-        }
-    }
+    console.log('Skipping cleanup to avoid hangs...');
+
+    try {
+        console.log('Closing browser...');
+        await browser.close();
+    } catch (_) {}
 
     console.log('Process completed successfully.');
     process.exit(0);
 }
 
 main().catch(error => {
-    console.error('CRITICAL ERROR:', error);
+    console.error('CRITICAL ERROR:', error.message || error);
+    if (error.stack) console.error(error.stack);
+    process.exit(1);
+});
+
+// 予期せぬエラーのトラップ
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    process.exit(1);
+});
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
     process.exit(1);
 });
