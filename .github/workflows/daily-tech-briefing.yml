@@ -1,4 +1,4 @@
-name: Daily Icebreak Generator
+name: Daily Tech Briefing Generator
 
 on:
   push:
