@@ -94,14 +94,7 @@ async function main() {
 
     const insightsData = JSON.parse(fs.readFileSync(insightsFile, 'utf-8'));
     
-    if (fs.existsSync(imageOutDir)) {
-        fs.readdirSync(imageOutDir).forEach(file => {
-            if (file.endsWith('.jpg') || file.endsWith('.png')) fs.unlinkSync(path.join(imageOutDir, file));
-        });
-    } else {
-        fs.mkdirSync(imageOutDir, { recursive: true });
-    }
-    
+    if (!fs.existsSync(imageOutDir)) fs.mkdirSync(imageOutDir, { recursive: true });
     if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
 
     const browser = await puppeteer.launch({
@@ -119,7 +112,56 @@ async function main() {
     const galleryItems = [];
     const entries = Object.entries(insightsData);
     
-    // 並列度: 2 (メモリ負荷を考慮)
+    // 画像のクリーンアップ (14日以上前を削除)
+    const retentionDays = 14;
+    const now = Date.now();
+    if (fs.existsSync(imageOutDir)) {
+        fs.readdirSync(imageOutDir).forEach(file => {
+            const filePath = path.join(imageOutDir, file);
+            const stats = fs.statSync(filePath);
+            const ageDays = (now - stats.mtimeMs) / (1000 * 60 * 60 * 24);
+            if (ageDays > retentionDays) {
+                console.log(`[Cleanup] Removing old image: ${file}`);
+                fs.unlinkSync(filePath);
+            }
+        });
+    }
+
+    // アーカイブデータのコピーとマニフェスト生成
+    const srcArchiveDir = path.join(dataDir, 'archives');
+    const distArchiveDir = path.join(distDir, 'archives');
+    if (fs.existsSync(srcArchiveDir)) {
+        console.log('[Gallery] Copying archives and generating manifest...');
+        fs.mkdirSync(distArchiveDir, { recursive: true });
+        
+        const allDates = [];
+        const copyRecursive = (src, dest) => {
+            if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
+            fs.readdirSync(src).forEach(file => {
+                const srcPath = path.join(src, file);
+                const destPath = path.join(dest, file);
+                const stat = fs.statSync(srcPath);
+                if (stat.isDirectory()) {
+                    copyRecursive(srcPath, destPath);
+                } else if (file.endsWith('.json')) {
+                    fs.copyFileSync(srcPath, destPath);
+                    // data/archives/2026/03/20.json -> 2026-03-20
+                    const parts = srcPath.split(path.sep);
+                    const day = file.replace('.json', '');
+                    const month = parts[parts.length - 2];
+                    const year = parts[parts.length - 3];
+                    if (year && month && day) allDates.push(`${year}-${month}-${day}`);
+                }
+            });
+        };
+        copyRecursive(srcArchiveDir, distArchiveDir);
+        
+        // 日付降順で保存
+        const manifest = allDates.sort().reverse();
+        fs.writeFileSync(path.join(distArchiveDir, 'manifest.json'), JSON.stringify(manifest), 'utf-8');
+        console.log(`[Gallery] Manifest generated with ${manifest.length} dates.`);
+    }
+
     const CONCURRENCY = 2;
     for (let i = 0; i < entries.length; i += CONCURRENCY) {
         const chunk = entries.slice(i, i + CONCURRENCY);

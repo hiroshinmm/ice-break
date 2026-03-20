@@ -70,3 +70,12 @@ jobs:
           GMAIL_PASS: ${{ secrets.GMAIL_PASS }}
           GMAIL_TO: ${{ secrets.GMAIL_TO }}
           GITHUB_PAGES_URL: "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/" 
+
+      # Step 6: Commit and Push Archives
+      - name: Commit and push archives
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/archives/
+          git commit -m "chore: archive daily insights [skip ci]" || echo "No changes to commit"
+          git push

@@ -175,6 +175,38 @@
             font-weight: 500;
         }
 
+        .header-date {
+            margin-top: 10px;
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        .archive-selector {
+            margin-top: 20px;
+        }
+
+        #archive-select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+            transition: background 0.2s;
+        }
+
+        #archive-select:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        #archive-select option {
+            background: #1e293b;
+            color: white;
+        }
+
     </style>
 </head>
 
@@ -182,17 +214,28 @@
 
     <header>
         <h1>Daily Tech Briefing</h1>
-        <p><%= new Date().toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' }) %> のテックニュース
-        </p>
+        <div id="date-display" class="header-date">
+            <%= new Date().toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' }) %> のテックニュース
+        </div>
+        <div class="archive-selector">
+            <select id="archive-select" onchange="loadArchive(this.value)">
+                <option value="">過去のブリーフィングを選択</option>
+            </select>
+        </div>
     </header>
 
     <div class="container">
-        <div class="grid">
+        <div id="loading" style="display: none; text-align: center; padding: 40px; color: var(--text-sub);">
+            Loading archives...
+        </div>
+        <div class="grid" id="insights-grid">
             <% for (const item of slides) { %>
                 <div class="card">
                     <div class="card-image-section">
                         <% if (item.imageFile) { %>
                             <img src="images/<%= item.imageFile %>" alt="<%= item.title %>">
+                        <% } else if (item.originalImageUrl) { %>
+                            <img src="<%= item.originalImageUrl %>" alt="<%= item.title %>">
                         <% } else { %>
                             <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800" alt="Default Tech Image">
                         <% } %>
@@ -221,6 +264,107 @@
             <% } %>
         </div>
     </div>
+
+    <script>
+        // アーカイブ一覧の取得とセレクトボックスの構築
+        async function fetchManifest() {
+            try {
+                const res = await fetch('archives/manifest.json');
+                if (!res.ok) return;
+                const dates = await res.json();
+                const select = document.getElementById('archive-select');
+                dates.forEach(date => {
+                    const option = document.createElement('option');
+                    option.value = date;
+                    option.textContent = date.replace(/-/g, '/');
+                    select.appendChild(option);
+                });
+
+                // URLパラメータに日付があれば読み込む
+                const params = new URLSearchParams(window.location.search);
+                const queryDate = params.get('date');
+                if (queryDate && dates.includes(queryDate)) {
+                    select.value = queryDate;
+                    loadArchive(queryDate);
+                }
+            } catch (e) { console.log('Archive manifest not found'); }
+        }
+
+        async function loadArchive(date) {
+            if (!date) {
+                window.location.href = window.location.pathname;
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            const grid = document.getElementById('insights-grid');
+            loading.style.display = 'block';
+            grid.style.opacity = '0.3';
+            grid.style.pointerEvents = 'none';
+
+            try {
+                const [y, m, d] = date.split('-');
+                const res = await fetch(`archives/${y}/${m}/${d}.json`);
+                if (!res.ok) throw new Error('Archive not found');
+                const data = await res.json();
+
+                // grid の中身を生成
+                renderGrid(data, date);
+                
+                // URLに反映 (ブラウザ履歴には残さない)
+                const newUrl = `${window.location.pathname}?date=${date}`;
+                window.history.replaceState({date}, date, newUrl);
+
+                document.getElementById('date-display').textContent = `${date.replace(/-/g, '/')} のテックニュース`;
+            } catch (e) {
+                alert('アーカイブの読み込みに失敗しました。');
+            } finally {
+                loading.style.display = 'none';
+                grid.style.opacity = '1';
+                grid.style.pointerEvents = 'auto';
+            }
+        }
+
+        function renderGrid(data, date) {
+            const grid = document.getElementById('insights-grid');
+            grid.innerHTML = '';
+            
+            Object.entries(data).forEach(([category, item]) => {
+                if (!item) return;
+
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                // 画像判定 (アーカイブはオリジナルURL優先)
+                let imgSrc = item.originalImageUrl || 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800';
+                
+                card.innerHTML = `
+                    <div class="card-image-section">
+                        <img src="${imgSrc}" alt="${item.title}">
+                    </div>
+                    <div class="card-body">
+                        <div class="card-category">${category}</div>
+                        <h2 class="card-title">
+                            <a href="${item.sourceUrl}" target="_blank">${item.title}</a>
+                        </h2>
+                        <div class="card-summary">${item.summary}</div>
+                        <div class="card-insight-box">
+                            <span class="card-insight-label">Technical Insight</span>
+                            <div class="card-insight-content">${item.insight}</div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-source">
+                                Source: <a href="${item.sourceUrl}" target="_blank">${item.sourceName}</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        fetchManifest();
+    </script>
 
 </body>
 

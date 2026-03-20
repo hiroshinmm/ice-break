@@ -204,6 +204,17 @@ async function main() {
     });
 
     try {
+        const today = new Date().toLocaleDateString('ja-JP', {
+            timeZone: 'Asia/Tokyo',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        }).replace(/\//g, '-'); // YYYY-MM-DD
+        
+        const [year, month, day] = today.split('-');
+        const archiveDir = path.join(dataDir, 'archives', year, month);
+        if (!fs.existsSync(archiveDir)) fs.mkdirSync(archiveDir, { recursive: true });
+
         const categoryEntries = Object.entries(newsData);
         const CONCURRENCY = 2;
         
@@ -271,6 +282,8 @@ ${newsText}
 
                     parsed.originalImageUrl = pickedItem.imageUrl || null;
                     parsed.originalImageArticleUrl = pickedItem.link;
+                    parsed.displayDate = today; // アーカイブ用に日付を付与
+                    
                     insights[category] = parsed;
                     console.log(`[Insight] Generated: ${parsed.title}`);
                 } catch (error) {
@@ -283,6 +296,12 @@ ${newsText}
                 await new Promise(r => setTimeout(r, 1000));
             }
         }
+
+        // アーカイブファイルの保存
+        const archiveFile = path.join(archiveDir, `${day}.json`);
+        console.log(`[Archive] Saving to ${archiveFile}`);
+        fs.writeFileSync(archiveFile, JSON.stringify(insights, null, 2), 'utf-8');
+
     } finally {
         await browser.close();
     }
