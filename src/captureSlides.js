@@ -69,7 +69,19 @@ async function main() {
     }
 
     const insightsData = JSON.parse(fs.readFileSync(insightsFile, 'utf-8'));
-    if (!fs.existsSync(imageOutDir)) fs.mkdirSync(imageOutDir, { recursive: true });
+    
+    // dist/images をクリーンアップ（古い画像が添付されるのを防ぐ）
+    if (fs.existsSync(imageOutDir)) {
+        console.log('Cleaning old images in dist/images...');
+        fs.readdirSync(imageOutDir).forEach(file => {
+            if (file.endsWith('.jpg') || file.endsWith('.png')) {
+                fs.unlinkSync(path.join(imageOutDir, file));
+            }
+        });
+    } else {
+        fs.mkdirSync(imageOutDir, { recursive: true });
+    }
+    
     if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
 
     const browser = await puppeteer.launch({

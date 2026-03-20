@@ -37,11 +37,14 @@ async function main() {
   if (fs.existsSync(imagesDir)) {
     const imageFiles = fs.readdirSync(imagesDir).filter(file => /_image\.jpg$/i.test(file));
     for (const file of imageFiles) {
-      attachments.push({
-        filename: file,
-        path: path.join(imagesDir, file),
-        cid: path.parse(file).name // safeName_image
-      });
+        const fullPath = path.join(imagesDir, file);
+        const fileName = path.basename(file);
+        const cid = fileName.replace(/\.[^/.]+$/, ""); // safeName_image
+        attachments.push({
+            filename: fileName,
+            path: fullPath,
+            cid: cid
+        });
     }
   }
 
@@ -76,7 +79,9 @@ async function main() {
     
     // この記事の画像が添付ファイルにあるか確認
     const hasImage = attachments.some(a => a.cid === cid);
-    const displayCid = hasImage ? cid : 'default_icon';
+    const hasDefault = attachments.some(a => a.cid === 'default_icon');
+    const displayCid = hasImage ? cid : (hasDefault ? 'default_icon' : null);
+    
     const imgStyle = hasImage 
       ? "width: 100%; max-width: 600px; height: auto; border-radius: 8px; border: 1px solid #f1f5f9; display: block; margin: 0 auto;"
       : "width: 100%; max-width: 150px; height: auto; border-radius: 8px; border: 1px solid #f1f5f9; display: block; margin: 0 auto; filter: grayscale(100%); opacity: 0.5;";
@@ -93,9 +98,11 @@ async function main() {
         </div>
         
         <div style="margin-bottom: 20px; text-align: center;">
-          <a href="${insight.sourceUrl}" target="_blank" style="display: inline-block; width: 100%;">
-            <img src="cid:${displayCid}" alt="${insight.title}" style="${imgStyle}" />
-          </a>
+          ${(hasImage || hasDefault) ? `
+            <a href="${insight.sourceUrl}" target="_blank" style="display: inline-block; width: 100%;">
+              <img src="cid:${displayCid}" alt="${insight.title}" style="${imgStyle}" />
+            </a>
+          ` : ''}
         </div>
 
         <div style="font-size: 14px; color: #334155; line-height: 1.6; margin-bottom: 15px;">
