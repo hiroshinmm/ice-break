@@ -1,0 +1,102 @@
+{
+  "AI": {
+    "title": "経産省が「フィジカルAI」を重点化",
+    "summary": "経済産業省が「AI半導体・デジタル産業戦略」を改定し、現実空間で動作するロボットや自動運転車などの「フィジカルAI」を新たな重点分野に位置付けました。計算資源や人材確保を含め、産業基盤の強化を急ぐ方針です。",
+    "insight": "LLMなどの生成AIだけでなく、現実世界のハードウェアと連携するAI実装が今後のエンジニアリングの主戦場となります。ロボティクスやエッジAIの知見を、既存のクラウドAIアーキテクチャとどう統合するかが鍵となるでしょう。",
+    "sourceUrl": "https://www.sbbit.jp/article/st/183026",
+    "sourceName": "ビジネス+IT",
+    "originalImageUrl": "https://www.sbbit.jp/article/image/183026/OGP_bit202603221135247554.jpg",
+    "originalImageArticleUrl": "https://www.sbbit.jp/article/st/183026",
+    "displayDate": "2026-03-23"
+  },
+  "SRD / XR": {
+    "title": "設計DXの切り札：VR空間共有による手戻り削減",
+    "summary": "リコージャパンが、VR空間共有ソリューションの提供を開始しました。離れた拠点間で同一のVRモデルをレビュー可能にすることで、製造・建築現場における設計時の認識齟齬を解消し、手戻りの削減と迅速な合意形成を実現します。",
+    "insight": "デジタルツインやVRを活用した設計検討は、建設や製造業において標準化が進んでいます。同期型コラボレーションツールとしてのVR導入は、物理的な移動コストを抑えるだけでなく、空間認識の齟齬を防ぐことで開発ライフサイクル全体を最適化する強力な手法です。",
+    "sourceUrl": "https://monoist.itmedia.co.jp/mn/articles/2603/23/news043.html",
+    "sourceName": "MONOist",
+    "originalImageUrl": "https://image.itmedia.co.jp/mn/articles/2603/23/cover_news043.jpg",
+    "originalImageArticleUrl": "https://monoist.itmedia.co.jp/mn/articles/2603/23/news043.html",
+    "displayDate": "2026-03-23"
+  },
+  "Production Monitor": {
+    "title": "Blackmagic PYXIS 6KがAF対応！開発アップデート",
+    "summary": "Blackmagic DesignのPYXIS 6Kに待望のオートフォーカス機能が実装されました。最新のテストビルドにより、顔検出、被写体追尾、リサイズ可能なフォーカスボックスなどの機能が追加され、プロ仕様のシネマカメラでの運用性が大きく向上しています。",
+    "insight": "シネマカメラにおいて、従来のMF主体のワークフローからPDAF（像面位相差AF）への移行が加速しています。ソフトウェアによる機能アップデートで既存ハードウェアの価値を高める手法は、エンジニアリングにおける継続的な改善の好例と言えます。",
+    "sourceUrl": "https://www.cined.com/blackmagic-pyxis-6k-autofocus-introduced-via-new-test-build-face-detection-object-tracking-and-resizable-focus-box/",
+    "sourceName": "CineD",
+    "originalImageUrl": "https://www.cined.com/content/uploads/2026/03/PYXIS-6K-AF-featured-300x169.jpg",
+    "originalImageArticleUrl": "https://www.cined.com/blackmagic-pyxis-6k-autofocus-introduced-via-new-test-build-face-detection-object-tracking-and-resizable-focus-box/",
+    "displayDate": "2026-03-23"
+  },
+  "TCL": {
+    "title": "TCLがマイクロLEDの価格を大幅引き下げ",
+    "summary": "TCLが次世代ディスプレイ技術である「真のマイクロLED」テレビの価格を大幅に削減したと報じられました。これまで非常に高価だったマイクロLEDテレビが、一般家庭への普及に向けた価格戦略へとシフトし始めています。",
+    "insight": "マイクロLEDは自己発光型で焼き付きのリスクがなく、高輝度・高コントラストを実現する究極のディスプレイ技術です。量産コストの低下は、既存の有機EL（OLED）やミニLED市場における競合を加速させ、エンジニア視点でも将来のデバイス設計やUIレンダリングの最適化を再考する転換点となるでしょう。",
+    "sourceUrl": "https://www.flatpanelshd.com/news.php?subaction=showfull&id=1773908110",
+    "sourceName": "FlatpanelsHD",
+    "originalImageUrl": "https://www.flatpanelshd.com/pictures/tclmicroled2026.jpg",
+    "originalImageArticleUrl": "https://www.flatpanelshd.com/news.php?subaction=showfull&id=1773908110",
+    "displayDate": "2026-03-23"
+  },
+  "TV": {
+    "title": "5年前の有機ELテレビはもう古いのか？",
+    "summary": "家電市場で進化を続ける有機ELテレビ（OLED TV）について、5年前のモデルが「型落ち」かどうかが議論されています。近年のピーク輝度の向上やAI画像処理技術の進化、リフレッシュレートの改善など、ハードウェアとソフトウェアの両面で急速に性能が向上しており、買い替えサイクルを巡る技術的な転換点が注目されています。",
+    "insight": "最新のOLED技術は、単なるパネル性能の向上だけでなく、機械学習を用いたアップスケーリングや最適化アルゴリズムが統合され、映像体験を底上げしています。ソフトウェアアップデートでどこまで追従できるか、ハードウェアの寿命と技術的寿命の乖離を考えることは、次世代のハードウェア開発やUI/UX設計を学ぶ上でも非常に興味深い視点です。",
+    "sourceUrl": "https://www.msn.com/en-us/news/technology/is-a-five-year-old-oled-tv-finally-considered-outdated/vi-AA1Z9BjH",
+    "sourceName": "MSN",
+    "originalImageUrl": "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1NAyiU.img?w=536&h=302&q=60&m=6&f=jpg&u=t",
+    "originalImageArticleUrl": "https://www.msn.com/en-us/news/technology/is-a-five-year-old-oled-tv-finally-considered-outdated/vi-AA1Z9BjH",
+    "displayDate": "2026-03-23"
+  },
+  "SONY": {
+    "title": "宇宙空間でソニーの技術力が証明される",
+    "summary": "国際宇宙ステーション（ISS）において、ソニーのミラーレス一眼カメラで撮影された高精細な映像が公開されました。過酷な宇宙環境下での信頼性と、最新のイメージング技術の到達点を示すトピックです。",
+    "insight": "エンジニアリングの観点では、放射線や極端な温度変化という過酷な宇宙環境で、市販カメラが如何に堅牢性と画像処理能力を維持しているかが注目ポイントです。民生品が宇宙開発という極限の現場で実用レベルに達していることは、機器設計の信頼性における重要な指標となります。",
+    "sourceUrl": "https://www.walkerplus.com/article/116197/image640394.html",
+    "sourceName": "ウォーカープラス",
+    "originalImageUrl": "https://news.walkerplus.com/article/116197/640383_615.jpg",
+    "originalImageArticleUrl": "https://www.walkerplus.com/article/116197/image640394.html",
+    "displayDate": "2026-03-23"
+  },
+  "Gaming Monitor": {
+    "title": "ASUS ZenScreen Duo OLEDが割引価格に",
+    "summary": "ASUSの折りたたみ式ポータブルモニター「ZenScreen Duo OLED」が520.99ドルに値下げされました。高画質なOLEDパネルとマルチディスプレイ環境をどこでも構築できる携帯性が特徴で、モバイル作業環境のアップグレードを検討しているエンジニアには注目の一品です。",
+    "insight": "ポータブルOLEDモニターの価格低下は、開発現場におけるモバイルマルチモニター環境の普及を加速させる可能性があります。特に折りたたみ機構による省スペース性は、出先でのコーディングやログ監視作業の生産性向上に寄与するでしょう。",
+    "sourceUrl": "https://www.technobezz.com/best/asus-zenscreen-duo-oled-foldable-portable-monitor-drops-to-52099-wuqz",
+    "sourceName": "Technobezz",
+    "originalImageUrl": "https://cdn.technobezz.com/deals-branded/3b4dfdee12ca4c44_branded.jpg",
+    "originalImageArticleUrl": "https://www.technobezz.com/best/asus-zenscreen-duo-oled-foldable-portable-monitor-drops-to-52099-wuqz",
+    "displayDate": "2026-03-23"
+  },
+  "Projector": {
+    "title": "プロジェクターの進化が止まらない！AI搭載の最新モデル",
+    "summary": "AI空間認識や電動ジンバル、最新エンジンを搭載した「JMGO N3 Ultimate」が日本上陸。高輝度・高画質化が進み、ホームシアター体験がかつてない没入感を実現しています。",
+    "insight": "プロジェクターの光学性能だけでなく、AIによる自動補正や空間認識といったソフトウェア側の処理能力がUXの決定打になっています。ハードとソフトの融合により、従来の「設置が大変」という課題が技術で解消されつつあります。",
+    "sourceUrl": "https://www.asahi.com/and/pressrelease/16394481",
+    "sourceName": "朝日新聞",
+    "originalImageUrl": "https://www.asahi.com/and/ogp/ogp_and.png",
+    "originalImageArticleUrl": "https://www.asahi.com/and/pressrelease/16394481",
+    "displayDate": "2026-03-23"
+  },
+  "Camera Control": {
+    "title": "香港のカメラモール探訪：空間効率と競争の激しさ",
+    "summary": "香港の旺角（モンコック）にある巨大なカメラモールを訪れた体験談。高層ビル内に店舗が迷路のようにひしめき合い、熾烈な価格競争が行われる現地のリアルな市場環境が紹介されています。限られたスペースを最大限に活用し、顧客を奪い合うアジア圏特有の商習慣が伺える興味深いレポートです。",
+    "insight": "都市部の極小面積で店舗を多層展開し、物理的な回遊性を高める設計は、デジタルプロダクトにおけるユーザー導線設計（UX）にも通じる考え方です。制約の多い環境下でいかに商流とエンゲージメントを最大化するかという視点は、エンジニアにとってのボトルネック解消のヒントにもなります。",
+    "sourceUrl": "https://www.dpreview.com/articles/7475558634/inside-hong-kongs-labyrinthine-camera-malls",
+    "sourceName": "Digital Photography Review (dpreview.com)",
+    "originalImageUrl": "https://3.img-dpreview.com/files/p/E~C658x551S4266x3200T1200x900~articles/7475558634/Hong_Kong_Camera_Store_Mall_09.jpeg",
+    "originalImageArticleUrl": "https://www.dpreview.com/articles/7475558634/inside-hong-kongs-labyrinthine-camera-malls",
+    "displayDate": "2026-03-23"
+  },
+  "LED Wall Display": {
+    "title": "巨大空間のDX：AIによる統合監視プラットフォームの進化",
+    "summary": "Userful社が発表した「InfinityAI」の機能拡張は、物理セキュリティ、サイバーセキュリティ、および運用データをLEDウォールを含む単一の状況認識環境へ統合するものです。大規模施設におけるリアルタイム監視の効率化と高度な意思決定を支援するプラットフォームです。",
+    "insight": "複数のデータソースから得られるストリーミングデータを、巨大なLEDディスプレイ上でいかに低遅延かつ直感的に可視化するかがエンジニアリング上の肝です。分散型のセンサーやAI分析結果を、統合ミドルウェアを通じて高解像度ウォールへ正確に同期させるアーキテクチャ設計の重要性が増しています。",
+    "sourceUrl": "https://ravepubs.com/userful-infinityai-unified-security-operations/",
+    "sourceName": "rAVe [PUBS]",
+    "originalImageUrl": "https://ravepubs.com/wp-content/uploads/2026/03/userful-infinity-edgeai-800x400.webp",
+    "originalImageArticleUrl": "https://ravepubs.com/userful-infinityai-unified-security-operations/",
+    "displayDate": "2026-03-23"
+  }
+}
