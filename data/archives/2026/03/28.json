@@ -1,0 +1,102 @@
+{
+  "SRD / XR": {
+    "title": "阪神高速、VRでETCトラブル対応研修を導入",
+    "summary": "阪神高速トール大阪は、料金所スタッフの安全教育にVRを活用した「ETCバー復旧訓練」を導入しました。年間約800名のスタッフが参加し、現場を再現した空間で緊急時の対応を効率的に学べる仕組みです。",
+    "insight": "定型業務の反復訓練において、VRによるシミュレーションはリスクゼロで高頻度の学習機会を提供できる優れた事例です。実務的な教育DXの観点から、こうした現場特化型のVR研修は今後さらに多くの業界で標準化されるでしょう。",
+    "sourceUrl": "https://www.moguravr.com/etc-bar-vr-training-hanshin-expressway/",
+    "sourceName": "Mogura VR",
+    "originalImageUrl": "https://assets.moguravr.com/uploads/2026/03/eaef69b30c2cdbbd9b3cc2baaf8d7ffe-kix.p3bt1s9umrr4-300x169.webp",
+    "originalImageArticleUrl": "https://www.moguravr.com/etc-bar-vr-training-hanshin-expressway/",
+    "displayDate": "2026-03-28"
+  },
+  "AI": {
+    "title": "MicrosoftのAI用データセンターが2.1GWへ拡大",
+    "summary": "Crusoe社がMicrosoft向けにテキサス州アビリーンのAIデータセンターを2.1GWまで拡張すると発表。単一のAIインフラとしては最大規模の電力供給となり、AI学習のための電力需要が急速に拡大している現状を浮き彫りにした。",
+    "insight": "AIモデルの大規模化に伴い、計算資源の物理的な制約（特に電力確保）が開発のボトルネックとなっており、データセンターの電力供給能力が競争力の源泉になりつつあります。エンジニアとしては、電力効率を意識したモデル設計や、分散処理環境でのアーキテクチャ最適化の重要性が今後さらに高まるでしょう。",
+    "sourceUrl": "https://www.crusoe.ai/resources/newsroom/crusoe-announces-new-900-mw-ai-factory-campus-in-abilene-texas-to-support-microsoft-ai-infrastructure",
+    "sourceName": "Crusoe",
+    "originalImageUrl": "https://cdn.prod.website-files.com/6863cc86499b79ce3ab28f8b/69c61994909ddf363dad4f9e_Blog%201200x675%20(1).jpg",
+    "originalImageArticleUrl": "https://www.crusoe.ai/resources/newsroom/crusoe-announces-new-900-mw-ai-factory-campus-in-abilene-texas-to-support-microsoft-ai-infrastructure",
+    "displayDate": "2026-03-28"
+  },
+  "TCL": {
+    "title": "TCLが次世代ディスプレイ技術を発表",
+    "summary": "TCLは2026年向けの新製品として、「Super QD（スーパー量子ドット）」技術やRGB Mini LEDを採用した最新ディスプレイラインナップを欧州で発表しました。画質とゲーミング性能を大幅に向上させた次世代モデルが市場に投入されます。",
+    "insight": "量子ドット技術の進化とMini LEDの制御向上は、広色域とコントラスト比の両立においてディスプレイエンジニアリングの重要な指標です。特にRGB型Mini LEDへの移行は、従来のバックライト方式から一歩進んだ発光制御技術として注目に値します。",
+    "sourceUrl": "https://vergemagazine.co.uk/tcl-unveils-2026-tv-audio-and-gaming-lineup-in-europe-with-next-gen-mini-led-tech/",
+    "sourceName": "vergemagazine.co.uk",
+    "originalImageUrl": "https://vergemagazine.co.uk/wp-content/uploads/2026/03/Screenshot-2026-03-27-at-11.24.28.png",
+    "originalImageArticleUrl": "https://vergemagazine.co.uk/tcl-unveils-2026-tv-audio-and-gaming-lineup-in-europe-with-next-gen-mini-led-tech/",
+    "displayDate": "2026-03-28"
+  },
+  "SONY": {
+    "title": "ソニーがメモリーカード事業からほぼ撤退、SSD不足が背景に",
+    "summary": "ソニーがメモリーカード事業の大部分を終了することを決定しました。背景には、近年の半導体・SSD市場のひっ迫や供給体制の変更が影響していると報じられています。長年カメラ業界を支えてきたブランドの大きな転換点です。",
+    "insight": "ストレージ市場における物理メディアの役割が急速に変化していることを示唆しています。半導体不足がニッチなハードウェア製品の存続に直結する現代において、エンジニアは部品調達リスクのサプライチェーン分析の重要性を再認識する必要があります。",
+    "sourceUrl": "https://petapixel.com/2026/03/27/sony-shuts-down-nearly-its-entire-memory-card-business-due-to-ssd-shortage/",
+    "sourceName": "PetaPixel",
+    "originalImageUrl": "https://petapixel.com/assets/uploads/2026/03/Sony-Suspends-Orders-for-CFe-and-SD-Memory-Cards-Due-to-SSD-Shortage.jpg",
+    "originalImageArticleUrl": "https://petapixel.com/2026/03/27/sony-shuts-down-nearly-its-entire-memory-card-business-due-to-ssd-shortage/",
+    "displayDate": "2026-03-28"
+  },
+  "Gaming Monitor": {
+    "title": "OLEDモニター市場が急拡大、出荷台数92%増を記録",
+    "summary": "2025年のOLEDモニター市場が前年比92%増と急成長を遂げ、Asusが市場をリードしています。現在、Amazonのセール等でもSamsungの高性能なQD-OLED製品が大幅値引きされており、普及の加速が鮮明です。特にSamsungの最新パネルは反射防止と耐傷性を強化しており、実用性と画質を両立した製品が主流となっています。",
+    "insight": "OLEDパネルの技術的課題であった焼き付き耐性や反射対策が実用レベルに達し、ゲーミングモニター市場の主役がLCDからOLEDへ急速に交代しています。エンジニアとしては、高リフレッシュレートや有機EL特有の応答速度が、今後のデスクトップUIのUXや開発環境の作業効率にどう寄与するか注視すべきです。",
+    "sourceUrl": "https://www.techspot.com/news/111846-oled-monitor-shipments-jumped-92-2025-asus-leading.html",
+    "sourceName": "TechSpot",
+    "originalImageUrl": "https://www.techspot.com/images2/news/bigimage/2026/03/2026-03-27-image-29.jpg",
+    "originalImageArticleUrl": "https://www.techspot.com/news/111846-oled-monitor-shipments-jumped-92-2025-asus-leading.html",
+    "displayDate": "2026-03-28"
+  },
+  "TV": {
+    "title": "春のセールで狙い目？Samsung/LGの有機ELテレビが大幅割引中",
+    "summary": "Amazon等の春のセールにおいて、SamsungやLGのハイエンド4K有機ELテレビ（OLED TV）が500ドルから最大800ドル引きとなる大幅なセールが行われています。モデルによっては50%オフで販売されており、高画質テレビの買い替えを検討する良いタイミングとなっています。",
+    "insight": "最新の有機ELディスプレイは高リフレッシュレートや優れたコントラスト比を持ち、マルチモニター環境やハイエンド開発PCの外部モニターとしても高いパフォーマンスを発揮します。価格変動の激しいハードウェア分野において、セール情報はエンジニアにとっても生産性向上のためのコストパフォーマンスを見極める重要な指標になります。",
+    "sourceUrl": "https://www.ign.com/articles/samsung-s90-4k-oled-tv-deal-amazon-spring-sale",
+    "sourceName": "IGN",
+    "originalImageUrl": "https://assets-prd.ignimgs.com/2026/03/23/samsungs90d-1774288952125.jpg?width=1280&format=jpg&auto=webp&quality=80",
+    "originalImageArticleUrl": "https://www.ign.com/articles/samsung-s90-4k-oled-tv-deal-amazon-spring-sale",
+    "displayDate": "2026-03-28"
+  },
+  "Production Monitor": {
+    "title": "半導体不足によりソニー製メモリカードの注文受付が停止",
+    "summary": "世界的な半導体不足の影響を受け、ソニーはCFexpress Type A/BおよびSDメモリカードの全ラインナップの注文受付を停止しました。現時点で販売店への供給がストップしており、再開時期は未定となっています。",
+    "insight": "ハードウェアの調達難はサプライチェーン全体に及ぶリスクであり、特にプロ向けのストレージメディア不足は現場の撮影ワークフローに直結します。インフラとしてのハードウェア依存度を見直し、代替ストレージの確保や堅牢なバックアップ体制の再構築が喫緊の課題と言えます。",
+    "sourceUrl": "https://www.newsshooter.com/2026/03/27/sonys-cfexpress-type-a-b-sd-memory-cards-are-no-longer-available-to-buy-due-to-the-global-shortage-of-semiconductors/?utm_source=rss&utm_medium=rss&utm_campaign=sonys-cfexpress-type-a-b-sd-memory-cards-are-no-longer-available-to-buy-due-to-the-global-shortage-of-semiconductors",
+    "sourceName": "Newsshooter",
+    "originalImageUrl": "https://www.newsshooter.com/wp-content/uploads/2026/03/Sony-Cards-740x416.jpg",
+    "originalImageArticleUrl": "https://www.newsshooter.com/2026/03/27/sonys-cfexpress-type-a-b-sd-memory-cards-are-no-longer-available-to-buy-due-to-the-global-shortage-of-semiconductors/?utm_source=rss&utm_medium=rss&utm_campaign=sonys-cfexpress-type-a-b-sd-memory-cards-are-no-longer-available-to-buy-due-to-the-global-shortage-of-semiconductors",
+    "displayDate": "2026-03-28"
+  },
+  "Projector": {
+    "title": "Valerionのフラッグシップ4Kプロジェクターが登場",
+    "summary": "アバックがValerionの最新4Kプロジェクター「Vision Master Max」の国内独占販売を開始。レーザー光源を採用した高性能モデルで、全国8店舗にて実機展示もスタートしました。",
+    "insight": "最新のレーザー投影技術や高輝度処理は、ハードウェアの冷却設計や熱マネジメントの観点からも興味深いエンジニアリング事例です。特にフラッグシップ機に見られる高精度な画像処理エンジンと光学系の最適化は、映像表示技術の進化を感じさせます。",
+    "sourceUrl": "https://online.stereosound.co.jp/_ct/17830367",
+    "sourceName": "Stereo Sound",
+    "originalImageUrl": "https://d1uzk9o9cg136f.cloudfront.net/f/16783364/rc/2026/03/27/c7ab031d0f47bb1b5f23afecfc6a3362f1cadb8c_xlarge.jpg",
+    "originalImageArticleUrl": "https://online.stereosound.co.jp/_ct/17830367",
+    "displayDate": "2026-03-28"
+  },
+  "Camera Control": {
+    "title": "ソニーがメモリーカード事業の大部分を停止、SSD不足が要因",
+    "summary": "世界的なSSD（フラッシュメモリ）不足の影響を受け、ソニーがSDカードおよびCFexpressカードのほぼ全製品の受注・出荷停止を発表しました。カメラ市場のインフラとも言える記録メディアの供給網に大きな混乱が予想されます。",
+    "insight": "半導体需給の逼迫が、ストレージ製品の製造コストと供給安定性に与える影響を如実に示しています。エンジニアとしては、ハードウェア依存度の高い製品群におけるサプライチェーンのレジリエンス確保がいかに重要かを再認識させられます。",
+    "sourceUrl": "https://petapixel.com/2026/03/27/sony-shuts-down-nearly-its-entire-memory-card-business-due-to-ssd-shortage/",
+    "sourceName": "PetaPixel",
+    "originalImageUrl": "https://petapixel.com/assets/uploads/2026/03/Sony-Suspends-Orders-for-CFe-and-SD-Memory-Cards-Due-to-SSD-Shortage.jpg",
+    "originalImageArticleUrl": "https://petapixel.com/2026/03/27/sony-shuts-down-nearly-its-entire-memory-card-business-due-to-ssd-shortage/",
+    "displayDate": "2026-03-28"
+  },
+  "LED Wall Display": {
+    "title": "YES Networkがスタジオに4K LEDウォールを導入",
+    "summary": "米国のスポーツ放送ネットワーク「YES Network」が、コネチカット州スタンフォードのスタジオを刷新し、ヤンキース戦の放送用として最新の4K LEDウォールを導入しました。高精細な映像体験を提供し、放送のプレゼンテーション能力を強化します。",
+    "insight": "大型LEDディスプレイの4K化は、放送スタジオの標準的なアップグレード要件となっています。エンジニア視点では、高解像度コンテンツの低遅延レンダリング処理や、スタジオ照明との色再現性の同期（カラーキャリブレーション）がシステム統合の鍵となります。",
+    "sourceUrl": "https://artthreat.net/13646-35902-yes-network-upgrades-stamford-studio-with-4k-led-wall-for-yankees/",
+    "sourceName": "artthreat.net",
+    "originalImageUrl": "https://artthreat.net/wp-content/uploads/2026/03/73440-yes-network-upgrades-stamford-studio-with-4k-led-wall-for-yankees.jpg-scaled.png",
+    "originalImageArticleUrl": "https://artthreat.net/13646-35902-yes-network-upgrades-stamford-studio-with-4k-led-wall-for-yankees/",
+    "displayDate": "2026-03-28"
+  }
+}
