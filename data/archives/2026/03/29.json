@@ -1,0 +1,102 @@
+{
+  "AI": {
+    "title": "エージェント時代に問う、AIコーディングの現実",
+    "summary": "AI開発ツールが普及する中、現場からは「安易なAIコーディングは負債を生む」という懸念が上がっています。生成AIにコードを任せることが常識化する今、技術者がどのような基準でエージェントを使いこなすべきかが問われています。",
+    "insight": "AI生成コードの品質保証や長期的なメンテナンスコストは、開発者の最重要課題です。単なるコード生成ではなく、設計意図を管理するアーキテクトとしての能力がこれまで以上に求められています。",
+    "sourceUrl": "https://atmarkit.itmedia.co.jp/ait/articles/2603/28/news018.html",
+    "sourceName": "ITmedia",
+    "originalImageUrl": "https://image.itmedia.co.jp/ait/articles/2603/28/cover_news018.jpg",
+    "originalImageArticleUrl": "https://atmarkit.itmedia.co.jp/ait/articles/2603/28/news018.html",
+    "displayDate": "2026-03-29"
+  },
+  "SRD / XR": {
+    "title": "坂本龍一がMRで蘇る、注目の芸術作品「KAGAMI」日本初上演へ",
+    "summary": "故・坂本龍一氏の演奏をMR（複合現実）空間で体験できるアート作品「KAGAMI」の日本初上演が決定しました。装着したデバイスを通して、実在する空間に現れる坂本氏のピアノ演奏を多角的な視点から鑑賞できる体験型の最新XRコンテンツです。",
+    "insight": "MR技術におけるホログラフィックな演出と空間オーディオの組み合わせは、既存の映像体験を根本から変えるポテンシャルを秘めています。単なる視覚的再現を超え、アーティストの存在感をデジタル空間でどう定義するかという設計思想は、今後のUI/UX設計における新たな指針となるでしょう。",
+    "sourceUrl": "https://prtimes.jp/main/html/rd/p/000000022.000148435.html",
+    "sourceName": "PR TIMES",
+    "originalImageUrl": "https://prcdn.freetls.fastly.net/release_image/148435/22/148435-22-d53aae3077d72b77d7e7be2555e93403-800x1132.jpg?format=jpeg&auto=webp&fit=bounds&width=2400&height=1260",
+    "originalImageArticleUrl": "https://prtimes.jp/main/html/rd/p/000000022.000148435.html",
+    "displayDate": "2026-03-29"
+  },
+  "Gaming Monitor": {
+    "title": "2025年、OLEDゲーミングモニター市場が倍増へ",
+    "summary": "2025年のPCモニター市場において、OLED（有機EL）モデルの出荷台数が前年比で倍増していることが報告されました。バーンイン（焼き付き）への懸念が根強い中、ASUSやSamsungといった大手メーカーが主導し、LCDからOLEDへの技術転換が急速に進んでいます。高リフレッシュレートや高解像度化も加速しており、普及期に入ったと言えるでしょう。",
+    "insight": "エンジニア視点では、ディスプレイの駆動制御アルゴリズムやピクセルシフト等の焼き付き低減技術が成熟し、実用レベルに達した点が重要です。また、量子ドット技術（QD-OLED）の進化による反射低減処理など、光学特性の改善がLCDの優位性を切り崩しています。",
+    "sourceUrl": "https://www.technetbooks.com/2026/03/oled-monitor-market-shipments-double-in.html",
+    "sourceName": "technetbooks.com",
+    "originalImageUrl": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgk-V9Rv6p60SfNZdeTh-DOE2by98a50kr6shgocrW3iAA0vzU6_8k55NrGD3i9YSxBgiQ0qYghZugtInzzT3IIdKyPuOJU84_xATuyhYCj8tJpD78k4TLNgulyA5yLR4MLrJuYJkcs0OPbh7InIrY8HCJUW7PWyeP24kmk68PD-y8TXdpZxK2ZsyYUIzes/w1280-h720-p-k-no-nu/OLED%20monitor%20sales%20have%20nearly%20doubled%20in%20a%20year.jpg",
+    "originalImageArticleUrl": "https://www.technetbooks.com/2026/03/oled-monitor-market-shipments-double-in.html",
+    "displayDate": "2026-03-29"
+  },
+  "Projector": {
+    "title": "ハイエンドプロジェクターの光束競争が激化：6,000lmモデルが登場",
+    "summary": "Hisenseから6,000ANSIルーメンという驚異的な輝度を誇る4Kトリプルレーザープロジェクター「XR10」の予約販売が開始されました。従来のホームシアター向け製品と比較しても圧倒的な明るさで、遮光環境が不完全なリビングなどでの利用にも適した性能を実現しています。",
+    "insight": "プロジェクターの性能指標において、光束（ルーメン）はコントラスト比と同等に重要なエンジニアリングの課題です。高輝度レーザー光源の採用は、従来の短焦点化と並び、ディスプレイ代替としての利用可能性を大きく広げています。",
+    "sourceUrl": "https://news.google.com/rss/articles/CBMinwFBVV95cUxPUUJNMDJEbzJraW0wTlYwc1dpcWVGakJCY0tMOHNjcVBVNXBBd1FObml4aC1GZEdXeWJaT092N2ZHblpZZnlmZmFwR3c1cFEtQ2xmQm9mZEhibG9RN19pMnNoM3poTDdBS05NcmdPemtFYllCQlIyWkNIeURiQm9XUTFVWjJaOTBrYkxXbk1CdW1zRFFCN3NFa3E4NkdRSkk?oc=5",
+    "sourceName": "Gizmochina",
+    "originalImageUrl": null,
+    "originalImageArticleUrl": "https://news.google.com/rss/articles/CBMinwFBVV95cUxPUUJNMDJEbzJraW0wTlYwc1dpcWVGakJCY0tMOHNjcVBVNXBBd1FObml4aC1GZEdXeWJaT092N2ZHblpZZnlmZmFwR3c1cFEtQ2xmQm9mZEhibG9RN19pMnNoM3poTDdBS05NcmdPemtFYllCQlIyWkNIeURiQm9XUTFVWjJaOTBrYkxXbk1CdW1zRFFCN3NFa3E4NkdRSkk?oc=5",
+    "displayDate": "2026-03-29"
+  },
+  "TCL": {
+    "title": "スマートTVの視聴データ収集に法的懸念が浮上",
+    "summary": "テキサス州司法長官が、スマートTVメーカーがユーザーの視聴内容を無断でスクリーンショット撮影し、データ収集を行っている可能性について指摘しました。プライバシー保護の観点から議論を呼んでいます。",
+    "insight": "組み込みデバイスにおけるテレメトリ収集とプライバシー境界線の再定義が必要です。エンジニアとしては、データの収集目的と透明性の確保だけでなく、エッジ側でのデータ処理や匿名化技術の実装が、今後ますます重要になります。",
+    "sourceUrl": "https://mashable.com/article/texas-ag-samsung-tcl-hisense-tv-screenshot-privacy",
+    "sourceName": "Mashable",
+    "originalImageUrl": "https://helios-i.mashable.com/imagery/articles/04U7u6EkdFOeaahpXzhrsTc/hero-image.fill.size_1200x675.v1765988206.jpg",
+    "originalImageArticleUrl": "https://mashable.com/article/texas-ag-samsung-tcl-hisense-tv-screenshot-privacy",
+    "displayDate": "2026-03-29"
+  },
+  "SONY": {
+    "title": "ソニー、CFexpress等の注文受付を一時停止　半導体供給難が影響",
+    "summary": "ソニーが、CFexpressカードおよび一部SDカードの注文受付を一時停止しました。世界的な半導体不足の影響による部品調達の遅れが理由です。再開時期は未定となっており、プロ向けカメラ機材の供給体制に影響が出ています。",
+    "insight": "ハードウェアエンジニアリングにおいて、先端ストレージ規格の供給不安はクリエイティブワークフローのボトルネックとなり得ます。サプライチェーンの脆弱性が最終製品だけでなく、周辺アクセサリの在庫確保にまで波及している点を注視すべきです。",
+    "sourceUrl": "https://www.itmedia.co.jp/news/articles/2603/29/news025.html",
+    "sourceName": "ITmedia",
+    "originalImageUrl": "https://image.itmedia.co.jp/news/articles/2603/29/cover_news025.jpg",
+    "originalImageArticleUrl": "https://www.itmedia.co.jp/news/articles/2603/29/news025.html",
+    "displayDate": "2026-03-29"
+  },
+  "LED Wall Display": {
+    "title": "YES Networkがスタジオに4K LEDウォールを導入",
+    "summary": "米国のスポーツ専門チャンネルYES Networkが、スタッフォードのスタジオに最新の4K LEDウォールを導入しました。ヤンキース戦の中継をはじめとする番組制作において、より高精細で没入感のある映像演出が可能になります。",
+    "insight": "放送スタジオにおけるLEDウォールは、従来のグリーンバックに代わる「バーチャルプロダクション」の基盤として重要です。高リフレッシュレートと広色域を確保しつつ、カメラとのフリッカーを防ぐための同期制御技術がエンジニアリングの鍵となります。",
+    "sourceUrl": "https://artthreat.net/13646-35902-yes-network-upgrades-stamford-studio-with-4k-led-wall-for-yankees/",
+    "sourceName": "artthreat.net",
+    "originalImageUrl": "https://artthreat.net/wp-content/uploads/2026/03/73440-yes-network-upgrades-stamford-studio-with-4k-led-wall-for-yankees.jpg-scaled.png",
+    "originalImageArticleUrl": "https://artthreat.net/13646-35902-yes-network-upgrades-stamford-studio-with-4k-led-wall-for-yankees/",
+    "displayDate": "2026-03-29"
+  },
+  "TV": {
+    "title": "LG最新フラッグシップOLED TVの実力検証",
+    "summary": "TechRadarがLGの最新有機ELテレビ「G6」を前モデルのG5と並べて徹底比較。画質やパフォーマンスの違いを専門的なテストルームで検証しており、その進化と実力についてレポートしています。",
+    "insight": "最新のディスプレイ技術において、ハードウェアのスペック差がユーザー体験にどう反映されるかを考察する良い事例です。エンジニアの視点からは、ハードウェア進化と信号処理の最適化が、どのような制約条件で差別化要因となっているかを確認する参考になります。",
+    "sourceUrl": "https://www.techradar.com/televisions/lg-g6-vs-lg-g5-comparison",
+    "sourceName": "TechRadar",
+    "originalImageUrl": "https://cdn.mos.cms.futurecdn.net/c6QshWPKcRBvUxF5XvPrB5-2560-80.jpg",
+    "originalImageArticleUrl": "https://www.techradar.com/televisions/lg-g6-vs-lg-g5-comparison",
+    "displayDate": "2026-03-29"
+  },
+  "Camera Control": {
+    "title": "カメラ市場の現在地：多様化するモデルと新たな現実",
+    "summary": "カメラ市場は従来の写真愛好家向けモデルから、Vlog用や特定のニッチ層向けなど多様化が進んでいます。機能の削ぎ落としや用途特化といったメーカーの戦略変化について解説しています。",
+    "insight": "エンジニア視点では、単なるスペック競争ではなく、ターゲットのUXに基づいた「機能の引き算」とプロダクトポジショニングの重要性が学べます。市場の成熟期において、何を捨てて何に特化すべきかという製品開発の意思決定の参考になります。",
+    "sourceUrl": "https://www.dpreview.com/opinion/8156562127/that-box-can-t-hold-all-your-dreams-the-new-reality-of-the-camera-market",
+    "sourceName": "Digital Photography Review (dpreview.com)",
+    "originalImageUrl": "https://3.img-dpreview.com/files/p/E~C327x0S3413x2560T1200x900~articles/8156562127/Fujifilm_X_half_diagonal_view.jpeg",
+    "originalImageArticleUrl": "https://www.dpreview.com/opinion/8156562127/that-box-can-t-hold-all-your-dreams-the-new-reality-of-the-camera-market",
+    "displayDate": "2026-03-29"
+  },
+  "Production Monitor": {
+    "title": "Sonyのメモリカード出荷停止：半導体不足の影響",
+    "summary": "世界的な半導体不足の影響を受け、SonyがCFexpress Type A/BおよびSDメモリカードの受注を停止しました。流通在庫が尽きれば市場からカードが消える恐れがあり、撮影現場のワークフローに直結する深刻なサプライチェーンリスクとなっています。",
+    "insight": "ハードウェアの調達難は、ソフトウェア開発における依存ライブラリのEOLと同様、予期せぬ運用停止を招くリスク要因です。エンジニアとしては、ボトルネックが発生した際の代替アーキテクチャや、ハードウェアに依存しない冗長化戦略の重要性を再認識させられます。",
+    "sourceUrl": "https://www.newsshooter.com/2026/03/27/sonys-cfexpress-type-a-b-sd-memory-cards-are-no-longer-available-to-buy-due-to-the-global-shortage-of-semiconductors/?utm_source=rss&utm_medium=rss&utm_campaign=sonys-cfexpress-type-a-b-sd-memory-cards-are-no-longer-available-to-buy-due-to-the-global-shortage-of-semiconductors",
+    "sourceName": "Newsshooter",
+    "originalImageUrl": "https://www.newsshooter.com/wp-content/uploads/2026/03/Sony-Cards-740x416.jpg",
+    "originalImageArticleUrl": "https://www.newsshooter.com/2026/03/27/sonys-cfexpress-type-a-b-sd-memory-cards-are-no-longer-available-to-buy-due-to-the-global-shortage-of-semiconductors/?utm_source=rss&utm_medium=rss&utm_campaign=sonys-cfexpress-type-a-b-sd-memory-cards-are-no-longer-available-to-buy-due-to-the-global-shortage-of-semiconductors",
+    "displayDate": "2026-03-29"
+  }
+}
